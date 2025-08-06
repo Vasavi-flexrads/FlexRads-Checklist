@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlexRads Checklist</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom cherry-red color palette */
+        :root {
+            --flexrads-red: #E74C3C; /* A brighter, more vibrant red */
+            --flexrads-dark-red: #C0392B; /* Darker red for hover states */
+            --dark-background: #1A1A1A; /* Slightly lighter dark for main background */
+            --content-background: #282828; /* Darker gray for content sections */
+            --text-color: #ECF0F1; /* Off-white for general text */
+            --border-color: #444444; /* Medium gray for borders */
+            --input-background: #333333; /* Dark gray for input fields */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark-background);
+            color: var(--text-color);
+        }
+
+        /* Styling for the main container */
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: var(--content-background);
+            border-radius: 1rem;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6); /* More prominent shadow */
+            position: relative; /* Needed for absolute positioning of logo */
+        }
+
+        /* Headings */
+        h1, h2, h3 {
+            color: var(--flexrads-red); /* Use the vibrant red for headings */
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        /* Labels for form elements */
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        /* Input fields and textareas */
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-background);
+            color: var(--text-color);
+            border-radius: 0.5rem;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--flexrads-red); /* Vibrant red on focus */
+        }
+
+        /* Radio and checkbox styling */
+        .radio-group, .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .radio-option, .checkbox-option {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .radio-option:hover, .checkbox-option:hover {
+            background-color: #3A3A3A; /* Slightly lighter dark gray on hover */
+            border-color: var(--flexrads-red); /* Vibrant red on hover */
+        }
+
+        .radio-option input[type="radio"],
+        .checkbox-option input[type="checkbox"] {
+            margin-right: 0.5rem;
+            appearance: none;
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid #666;
+            border-radius: 50%; /* For radio buttons */
+            background-color: #333;
+            position: relative;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .checkbox-option input[type="checkbox"] {
+            border-radius: 0.25rem; /* For checkboxes */
+        }
+
+        .radio-option input[type="radio"]:checked,
+        .checkbox-option input[type="checkbox"]:checked {
+            background-color: var(--flexrads-red); /* Vibrant red when checked */
+            border-color: var(--flexrads-red);
+        }
+
+        /* Inner circle for checked radio button */
+        .radio-option input[type="radio"]:checked::before {
+            content: '';
+            display: block;
+            width: 0.6rem;
+            height: 0.6rem;
+            background-color: #fff;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Checkmark for checked checkbox */
+        .checkbox-option input[type="checkbox"]:checked::after {
+            content: '\2713'; /* Checkmark character */
+            display: block;
+            color: #fff;
+            font-size: 0.8rem;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Button styling */
+        button {
+            background-color: var(--flexrads-red); /* Always vibrant red for CTA */
+            color: #fff;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+            border: none;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6); /* Even more prominent shadow */
+            display: inline-block; /* Ensure it respects margin/padding */
+        }
+
+        button:hover {
+            background-color: var(--flexrads-dark-red); /* Darker red on hover */
+            transform: translateY(-4px); /* More pronounced lift */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.7);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Report output area */
+        #reportOutput {
+            min-height: 200px;
+            background-color: var(--input-background);
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            white-space: pre-wrap; /* Preserve whitespace and wrap text */
+            word-wrap: break-word; /* Break long words */
+            font-family: monospace;
+            color: var(--text-color);
+        }
+
+        /* Hidden class */
+        .hidden {
+            display: none;
+        }
+
+        /* Copy button styling */
+        .copy-btn {
+            background: none;
+            border: none;
+            color: var(--flexrads-red);
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin-left: 0.5rem;
+            padding: 0.2rem;
+            border-radius: 0.3rem;
+            transition: background-color 0.2s, color 0.2s;
+            box-shadow: none; /* Override button shadow */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .copy-btn:hover {
+            background-color: rgba(231, 76, 60, 0.2); /* Light red hover */
+            color: var(--flexrads-red);
+            transform: none; /* Override button lift */
+            box-shadow: none; /* Override button shadow */
+        }
+
+        .copy-btn:active {
+            background-color: rgba(231, 76, 60, 0.4);
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Copy confirmation message */
+        .copy-message {
+            margin-left: 1rem;
+            color: #27AE60; /* Green color for success */
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .copy-message.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="p-4">
+    <div class="container">
+        <h1 class="text-3xl text-center mb-6">FlexRads Checklist</h1>
+
+        <!-- Modality and Study Selection -->
+        <div class="mb-6 p-4 border border-gray-700 rounded-lg">
+            <h2 class="text-xl mb-4">Study Selection</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="modalitySelect" class="block">Select Modality:</label>
+                    <select id="modalitySelect" class="w-full">
+                        <option value="">-- Please Select --</option>
+                        <option value="X-Ray">X-Ray</option>
+                        <option value="CT">CT</option>
+                        <option value="MRI">MRI</option>
+                        <option value="Ultrasound">Ultrasound</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="studyTypeSelect" class="block">Select Study Type:</label>
+                    <select id="studyTypeSelect" class="w-full" disabled>
+                        <option value="">-- Please Select --</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- X-Ray Knee Checklist Section -->
+        <div id="kneeChecklistSection" class="hidden p-4 border border-gray-700 rounded-lg">
+            <h2 class="text-xl mb-4">X-Ray Knee Checklist</h2>
+
+            <!-- Clinical History -->
+            <div class="mb-4">
+                <label for="clinicalHistory" class="block">Clinical History:</label>
+                <textarea id="clinicalHistory" rows="3" placeholder="Enter clinical history..."></textarea>
+            </div>
+
+            <!-- Laterality -->
+            <div class="mb-4">
+                <label class="block">Laterality:</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="laterality" value="Right"> Right
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="laterality" value="Left"> Left
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="laterality" value="Bilateral"> Bilateral
+                    </label>
+                </div>
+            </div>
+
+            <h3 class="text-lg mb-4">Checklist Items:</h3>
+
+            <!-- 1. Degenerative Changes -->
+            <div class="mb-4 p-3 border border-gray-800 rounded-md">
+                <label class="block">1. Degenerative changes:</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="degenerativeChanges" value="Yes"> Yes
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="degenerativeChanges" value="No" checked> No
+                    </label>
+                </div>
+                <div id="degenerativeDetails" class="hidden mt-2 p-2 border border-gray-700 rounded-md">
+                    <label class="block mb-2">Compartments (multi-select):</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="compartments" value="Medial"> Medial
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="compartments" value="Lateral"> Lateral
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="compartments" value="Patellofemoral"> Patellofemoral
+                        </label>
+                    </div>
+                    <label class="block mb-2">Severity:</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="severity" value="Mild"> Mild
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="severity" value="Moderate"> Moderate
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="severity" value="Severe"> Severe
+                        </label>
+                    </div>
+                    <label class="block mb-2">Osteophyte:</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="osteophyte" value="Present"> Present
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="osteophyte" value="Absent" checked> Absent
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Fracture -->
+            <div class="mb-4 p-3 border border-gray-800 rounded-md">
+                <label class="block">2. Fracture:</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="fracture" value="Yes"> Yes
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="fracture" value="No" checked> No
+                    </label>
+                </div>
+                <div id="fractureDetails" class="hidden mt-2">
+                    <label for="fractureTypeLocation" class="block">Type and Location:</label>
+                    <input type="text" id="fractureTypeLocation" placeholder="e.g., Tibial plateau fracture, non-displaced">
+                </div>
+            </div>
+
+            <!-- 3. Joint Effusion -->
+            <div class="mb-4 p-3 border border-gray-800 rounded-md">
+                <label class="block">3. Joint effusion:</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="jointEffusion" value="None" checked> None
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="jointEffusion" value="Mild"> Mild
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="jointEffusion" value="Moderate"> Moderate
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="jointEffusion" value="Severe"> Severe
+                    </label>
+                </div>
+            </div>
+
+            <!-- 4. Loose Bodies -->
+            <div class="mb-4 p-3 border border-gray-800 rounded-md">
+                <label class="block">4. Loose bodies:</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="looseBodies" value="Present"> Present
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="looseBodies" value="Absent" checked> Absent
+                    </label>
+                </div>
+                <div id="looseBodiesDetails" class="hidden mt-2">
+                    <label for="looseBodiesLocation" class="block">Location:</label>
+                    <input type="text" id="looseBodiesLocation" placeholder="e.g., Suprapatellar pouch">
+                </div>
+            </div>
+
+            <!-- 5. Vascular Calcification -->
+            <div class="mb-4 p-3 border border-gray-800 rounded-md">
+                <label class="block">5. Vascular calcification:</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="vascularCalcification" value="Present"> Present
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="vascularCalcification" value="Absent" checked> Absent
+                    </label>
+                </div>
+            </div>
+
+            <!-- 6. Any Implants -->
+            <div class="mb-4 p-3 border border-gray-800 rounded-md">
+                <label class="block">6. Any Implants:</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="implants" value="Yes"> Yes
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="implants" value="No" checked> No
+                    </label>
+                </div>
+                <div id="implantsDetails" class="hidden mt-2 p-2 border border-gray-700 rounded-md">
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="implantType" value="TKR"> TKR (Total Knee Replacement)
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="implantType" value="Partial knee replacement"> Partial knee replacement
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="implantType" value="Others"> Others
+                        </label>
+                    </div>
+                    <div id="partialKneeDetails" class="hidden mt-2">
+                        <label for="partialKneeCompartment" class="block">Compartment:</label>
+                        <input type="text" id="partialKneeCompartment" placeholder="e.g., Medial">
+                    </div>
+                    <div id="otherImplantsDetails" class="hidden mt-2">
+                        <label for="otherImplantType" class="block">Specify Other:</label>
+                        <input type="text" id="otherImplantType" placeholder="e.g., Screws, plates">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7. Lesion -->
+            <div class="mb-4 p-3 border border-gray-800 rounded-md">
+                <label class="block">7. Lesion:</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="lesion" value="Yes"> Yes
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="lesion" value="No" checked> No
+                    </label>
+                </div>
+                <div id="lesionDetails" class="hidden mt-2">
+                    <label for="lesionRegion" class="block">Region:</label>
+                    <input type="text" id="lesionRegion" placeholder="e.g., Distal femur">
+                    <label for="lesionSize" class="block">Size:</label>
+                    <input type="text" id="lesionSize" placeholder="e.g., 2x3 cm">
+                </div>
+            </div>
+
+            <!-- 8. Post op status -->
+            <div class="mb-4 p-3 border border-gray-800 rounded-md">
+                <label class="block">8. Post op status:</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="postOpStatus" value="Yes"> Yes
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="postOpStatus" value="No" checked> No
+                    </label>
+                </div>
+                <div id="postOpDetails" class="hidden mt-2">
+                    <label for="postOpDescription" class="block">Description:</label>
+                    <input type="text" id="postOpDescription" placeholder="e.g., Status post ACL reconstruction">
+                </div>
+            </div>
+
+            <!-- Generate Report Button -->
+            <div class="text-center mt-6">
+                <button id="generateReportBtn">Generate Report</button>
+            </div>
+        </div>
+
+        <!-- Report Output Area -->
+        <div class="mt-8 p-4 border border-gray-700 rounded-lg">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl">Report Transcript</h2>
+                <div class="flex items-center">
+                    <button id="copyReportBtn" class="copy-btn" title="Copy to Clipboard">
+                        <!-- Clipboard icon (SVG for better styling and control) -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-copy">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                    </button>
+                    <span id="copyMessage" class="copy-message">Copied!</span>
+                </div>
+            </div>
+            <textarea id="reportOutput" readonly class="w-full"></textarea>
+        </div>
+    </div>
+
+    <script>
+        // DOM element references
+        const modalitySelect = document.getElementById('modalitySelect');
+        const studyTypeSelect = document.getElementById('studyTypeSelect');
+        const kneeChecklistSection = document.getElementById('kneeChecklistSection');
+        const generateReportBtn = document.getElementById('generateReportBtn');
+        const reportOutput = document.getElementById('reportOutput');
+        const copyReportBtn = document.getElementById('copyReportBtn');
+        const copyMessage = document.getElementById('copyMessage');
+
+        // Dynamic elements for conditional display
+        const degenerativeChangesRadios = document.querySelectorAll('input[name="degenerativeChanges"]');
+        const degenerativeDetails = document.getElementById('degenerativeDetails');
+        const fractureRadios = document.querySelectorAll('input[name="fracture"]');
+        const fractureDetails = document.getElementById('fractureDetails');
+        const looseBodiesRadios = document.querySelectorAll('input[name="looseBodies"]');
+        const looseBodiesDetails = document.getElementById('looseBodiesDetails');
+        const implantsRadios = document.querySelectorAll('input[name="implants"]');
+        const implantsDetails = document.getElementById('implantsDetails');
+        const implantTypeRadios = document.querySelectorAll('input[name="implantType"]');
+        const partialKneeDetails = document.getElementById('partialKneeDetails');
+        const otherImplantsDetails = document.getElementById('otherImplantsDetails');
+        const lesionRadios = document.querySelectorAll('input[name="lesion"]');
+        const lesionDetails = document.getElementById('lesionDetails');
+        const postOpStatusRadios = document.querySelectorAll('input[name="postOpStatus"]');
+        const postOpDetails = document.getElementById('postOpDetails');
+
+        // Event listener for Modality selection
+        modalitySelect.addEventListener('change', () => {
+            const selectedModality = modalitySelect.value;
+            studyTypeSelect.innerHTML = '<option value="">-- Please Select --</option>'; // Clear previous options
+            studyTypeSelect.disabled = true;
+            kneeChecklistSection.classList.add('hidden'); // Hide knee checklist by default
+
+            if (selectedModality === 'X-Ray') {
+                studyTypeSelect.disabled = false;
+                // Populate study types for X-Ray
+                ['Knee', 'Ankle', 'Chest', 'Hand'].forEach(study => {
+                    const option = document.createElement('option');
+                    option.value = study;
+                    option.textContent = study;
+                    studyTypeSelect.appendChild(option);
+                });
+            }
+            // Add more conditions for other modalities if needed in the future
+        });
+
+        // Event listener for Study Type selection
+        studyTypeSelect.addEventListener('change', () => {
+            const selectedStudyType = studyTypeSelect.value;
+            if (selectedStudyType === 'Knee') {
+                kneeChecklistSection.classList.remove('hidden');
+            } else {
+                kneeChecklistSection.classList.add('hidden');
+            }
+        });
+
+        // Helper function to update visibility of conditional fields
+        function updateVisibility(radioGroup, targetElement) {
+            radioGroup.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    if (radio.value === 'Yes' || radio.value === 'Present') {
+                        targetElement.classList.remove('hidden');
+                    } else {
+                        targetElement.classList.add('hidden');
+                        // Reset inputs within hidden sections to avoid stale data
+                        targetElement.querySelectorAll('input[type="text"], input[type="checkbox"], input[type="radio"]').forEach(input => {
+                            if (input.type === 'text') input.value = '';
+                            if (input.type === 'checkbox' || input.type === 'radio') input.checked = false;
+                        });
+                        // For radio groups, ensure a default 'No' or 'Absent' is selected if available
+                        const defaultRadio = targetElement.querySelector('input[value="No"], input[value="Absent"], input[value="None"]');
+                        if (defaultRadio) defaultRadio.checked = true;
+                    }
+                });
+            });
+        }
+
+        // Initialize visibility for all conditional sections
+        updateVisibility(degenerativeChangesRadios, degenerativeDetails);
+        updateVisibility(fractureRadios, fractureDetails);
+        updateVisibility(looseBodiesRadios, looseBodiesDetails);
+        updateVisibility(implantsRadios, implantsDetails);
+        updateVisibility(lesionRadios, lesionDetails);
+        updateVisibility(postOpStatusRadios, postOpDetails);
+
+        // Specific logic for Implant Type (nested conditional)
+        implantTypeRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                partialKneeDetails.classList.add('hidden');
+                otherImplantsDetails.classList.add('hidden');
+                document.getElementById('partialKneeCompartment').value = '';
+                document.getElementById('otherImplantType').value = '';
+
+                if (radio.value === 'Partial knee replacement') {
+                    partialKneeDetails.classList.remove('hidden');
+                } else if (radio.value === 'Others') {
+                    otherImplantsDetails.classList.remove('hidden');
+                }
+            });
+        });
+
+        // Function to get selected radio value
+        function getRadioValue(name) {
+            const radios = document.querySelectorAll(`input[name="${name}"]:checked`);
+            return radios.length > 0 ? radios[0].value : null;
+        }
+
+        // Function to get selected checkbox values
+        function getCheckboxValues(name) {
+            const checkboxes = document.querySelectorAll(`input[name="${name}"]:checked`);
+            return Array.from(checkboxes).map(cb => cb.value);
+        }
+
+        // Function to generate the report transcript
+        generateReportBtn.addEventListener('click', () => {
+            const clinicalHistory = document.getElementById('clinicalHistory').value.trim();
+            const laterality = getRadioValue('laterality');
+
+            const degenerativeChanges = getRadioValue('degenerativeChanges');
+            const compartments = degenerativeChanges === 'Yes' ? getCheckboxValues('compartments') : [];
+            const severity = degenerativeChanges === 'Yes' ? getRadioValue('severity') : null;
+            const osteophyte = degenerativeChanges === 'Yes' ? getRadioValue('osteophyte') : null;
+
+            const fracture = getRadioValue('fracture');
+            const fractureTypeLocation = fracture === 'Yes' ? document.getElementById('fractureTypeLocation').value.trim() : '';
+
+            const jointEffusion = getRadioValue('jointEffusion');
+
+            const looseBodies = getRadioValue('looseBodies');
+            const looseBodiesLocation = looseBodies === 'Present' ? document.getElementById('looseBodiesLocation').value.trim() : '';
+
+            const vascularCalcification = getRadioValue('vascularCalcification');
+
+            const implants = getRadioValue('implants');
+            const implantType = implants === 'Yes' ? getRadioValue('implantType') : null;
+            const partialKneeCompartment = (implantType === 'Partial knee replacement' && implants === 'Yes') ? document.getElementById('partialKneeCompartment').value.trim() : '';
+            const otherImplantType = (implantType === 'Others' && implants === 'Yes') ? document.getElementById('otherImplantType').value.trim() : '';
+
+            const lesion = getRadioValue('lesion');
+            const lesionRegion = lesion === 'Yes' ? document.getElementById('lesionRegion').value.trim() : '';
+            const lesionSize = lesion === 'Yes' ? document.getElementById('lesionSize').value.trim() : '';
+
+            const postOpStatus = getRadioValue('postOpStatus');
+            const postOpDescription = postOpStatus === 'Yes' ? document.getElementById('postOpDescription').value.trim() : '';
+
+            let report = "FINDINGS:\n\n";
+            let findings = [];
+
+            // Add clinical history if provided
+            if (clinicalHistory) {
+                report = `CLINICAL HISTORY: ${clinicalHistory}\n\n` + report;
+            }
+
+            // Add laterality
+            if (laterality) {
+                report = `STUDY: X-Ray ${laterality} Knee\n\n` + report;
+            }
+
+
+            // 1. Degenerative Changes
+            if (degenerativeChanges === 'Yes') {
+                let degText = `${severity ? severity + ' ' : ''}degenerative changes`;
+                if (compartments.length > 0) {
+                    degText += ` involving the ${compartments.join(', ')} compartment(s)`;
+                }
+                if (osteophyte === 'Present') {
+                    degText += ` with osteophyte formation`;
+                }
+                findings.push(degText + '.');
+            }
+
+            // 2. Fracture
+            if (fracture === 'Yes' && fractureTypeLocation) {
+                findings.push(`Fracture: ${fractureTypeLocation}.`);
+            }
+
+            // 3. Joint Effusion
+            if (jointEffusion && jointEffusion !== 'None') {
+                findings.push(`${jointEffusion} joint effusion.`);
+            }
+
+            // 4. Loose Bodies
+            if (looseBodies === 'Present' && looseBodiesLocation) {
+                findings.push(`Loose bodies present in the ${looseBodiesLocation}.`);
+            }
+
+            // 5. Vascular Calcification
+            if (vascularCalcification === 'Present') {
+                findings.push("Vascular calcifications are present.");
+            }
+
+            // 6. Implants
+            if (implants === 'Yes') {
+                if (implantType === 'TKR') {
+                    findings.push("Total knee replacement present.");
+                } else if (implantType === 'Partial knee replacement') {
+                    findings.push(`Partial knee replacement present, involving the ${partialKneeCompartment || 'unspecified'} compartment.`);
+                } else if (implantType === 'Others' && otherImplantType) {
+                    findings.push(`Other implants present: ${otherImplantType}.`);
+                }
+            }
+
+            // 7. Lesion
+            if (lesion === 'Yes' && (lesionRegion || lesionSize)) {
+                let lesionText = "Lesion identified";
+                if (lesionRegion) lesionText += ` in the ${lesionRegion}`;
+                if (lesionSize) lesionText += ` measuring ${lesionSize}`;
+                findings.push(lesionText + '.');
+            }
+
+            // 8. Post op status
+            if (postOpStatus === 'Yes' && postOpDescription) {
+                findings.push(`Post-operative status: ${postOpDescription}.`);
+            }
+
+            // Format findings into numbered list
+            if (findings.length > 0) {
+                report += findings.map((f, index) => `${index + 1}. ${f}`).join('\n');
+            } else {
+                report += "No positive findings to report based on selections.";
+            }
+
+            reportOutput.value = report;
+        });
+
+        // Copy to clipboard functionality
+        copyReportBtn.addEventListener('click', () => {
+            reportOutput.select(); // Select the text in the textarea
+            reportOutput.setSelectionRange(0, 99999); // For mobile devices
+            document.execCommand('copy'); // Copy the text
+
+            // Show confirmation message
+            copyMessage.classList.add('show');
+            setTimeout(() => {
+                copyMessage.classList.remove('show');
+            }, 2000); // Hide after 2 seconds
+        });
+
+
+        // Initial state setup for conditional fields (hide them on load)
+        degenerativeDetails.classList.add('hidden');
+        fractureDetails.classList.add('hidden');
+        looseBodiesDetails.classList.add('hidden');
+        implantsDetails.classList.add('hidden');
+        partialKneeDetails.classList.add('hidden');
+        otherImplantsDetails.classList.add('hidden');
+        lesionDetails.classList.add('hidden');
+        postOpDetails.classList.add('hidden');
+
+        // Ensure default radio selections are active on load
+        document.querySelector('input[name="degenerativeChanges"][value="No"]').checked = true;
+        document.querySelector('input[name="fracture"][value="No"]').checked = true;
+        document.querySelector('input[name="jointEffusion"][value="None"]').checked = true;
+        document.querySelector('input[name="looseBodies"][value="Absent"]').checked = true;
+        document.querySelector('input[name="vascularCalcification"][value="Absent"]').checked = true;
+        document.querySelector('input[name="implants"][value="No"]').checked = true;
+        document.querySelector('input[name="lesion"][value="No"]').checked = true;
+        document.querySelector('input[name="postOpStatus"][value="No"]').checked = true;
+
+    </script>
+</body>
+</html>
