@@ -362,16 +362,20 @@
         /**
          * Creates and returns a DOM element for a single knee checklist section.
          * @param {string} prefix - A unique prefix for input names and IDs (e.g., 'right_', 'left_').
-         * @param {string} title - The display title for this knee section (e.g., 'Right Knee', 'Left Knee').
+         * @param {string} kneeName - The display name for this knee (e.g., 'Right Knee', 'Left Knee').
+         * @param {string} selectedLaterality - The overall laterality selected ('Right', 'Left', 'Bilateral').
          * @returns {HTMLElement} The created div element containing the checklist.
          */
-        function createKneeChecklistElements(prefix, title) {
+        function createKneeChecklistElements(prefix, kneeName, selectedLaterality) {
             const sectionDiv = document.createElement('div');
             sectionDiv.id = `${prefix}KneeSection`;
             sectionDiv.className = 'knee-side-section mt-6'; // Added class for styling
 
+            // Determine the title based on laterality
+            const h3Title = (selectedLaterality === 'Bilateral') ? `${kneeName} Checklist Items:` : `Checklist Items:`;
+
             sectionDiv.innerHTML = `
-                <h3 class="text-xl mb-4">${title} Checklist Items:</h3>
+                <h3 class="text-xl mb-4">${h3Title}</h3>
 
                 <!-- 1. Degenerative Changes -->
                 <div class="mb-4 p-3 border border-gray-800 rounded-md">
@@ -689,14 +693,15 @@
         lateralityRadios.forEach(radio => {
             radio.addEventListener('change', () => {
                 dynamicKneeChecklistsContainer.innerHTML = ''; // Clear previous knee sections
+                const selectedLaterality = radio.value; // Get the selected laterality here
 
-                if (radio.value === 'Right') {
-                    dynamicKneeChecklistsContainer.appendChild(createKneeChecklistElements('right_', 'Right Knee'));
-                } else if (radio.value === 'Left') {
-                    dynamicKneeChecklistsContainer.appendChild(createKneeChecklistElements('left_', 'Left Knee'));
-                } else if (radio.value === 'Bilateral') {
-                    dynamicKneeChecklistsContainer.appendChild(createKneeChecklistElements('right_', 'Right Knee'));
-                    dynamicKneeChecklistsContainer.appendChild(createKneeChecklistElements('left_', 'Left Knee'));
+                if (selectedLaterality === 'Right') {
+                    dynamicKneeChecklistsContainer.appendChild(createKneeChecklistElements('right_', 'Right Knee', selectedLaterality));
+                } else if (selectedLaterality === 'Left') {
+                    dynamicKneeChecklistsContainer.appendChild(createKneeChecklistElements('left_', 'Left Knee', selectedLaterality));
+                } else if (selectedLaterality === 'Bilateral') {
+                    dynamicKneeChecklistsContainer.appendChild(createKneeChecklistElements('right_', 'Right Knee', selectedLaterality));
+                    dynamicKneeChecklistsContainer.appendChild(createKneeChecklistElements('left_', 'Left Knee', selectedLaterality));
                 }
             });
         });
@@ -720,8 +725,10 @@
         }
 
         // Function to generate findings for a single knee
-        function generateKneeFindings(prefix, kneeName) {
+        function generateKneeFindings(prefix, kneeName, selectedLaterality) {
             const findings = [];
+            // Determine if kneeName should be included in the finding string
+            const nameQualifier = (selectedLaterality === 'Bilateral') ? ` in ${kneeName}` : '';
 
             const degenerativeChanges = getRadioValue('degenerativeChanges', prefix);
             const selectedCompartments = getCheckboxValues('compartments', prefix);
@@ -730,36 +737,36 @@
             if (degenerativeChanges === 'Yes') {
                 if (selectedCompartments.includes('Medial')) {
                     const medialSeverity = getRadioValue('medialSeverity', prefix);
-                    if (medialSeverity) findings.push(`${medialSeverity} degenerative changes in ${kneeName} medial compartment.`);
+                    if (medialSeverity) findings.push(`${medialSeverity} degenerative changes${nameQualifier} medial compartment.`);
                 }
                 if (selectedCompartments.includes('Lateral')) {
                     const lateralSeverity = getRadioValue('lateralSeverity', prefix);
-                    if (lateralSeverity) findings.push(`${lateralSeverity} degenerative changes in ${kneeName} lateral compartment.`);
+                    if (lateralSeverity) findings.push(`${lateralSeverity} degenerative changes${nameQualifier} lateral compartment.`);
                 }
                 if (selectedCompartments.includes('Patellofemoral')) {
                     const patellofemoralSeverity = getRadioValue('patellofemoralSeverity', prefix);
-                    if (patellofemoralSeverity) findings.push(`${patellofemoralSeverity} degenerative changes in ${kneeName} patellofemoral compartment.`);
+                    if (patellofemoralSeverity) findings.push(`${patellofemoralSeverity} degenerative changes${nameQualifier} patellofemoral compartment.`);
                 }
 
                 if (osteophyte === 'Present') {
-                    findings.push(`Osteophyte present in ${kneeName}.`);
+                    findings.push(`Osteophyte present${nameQualifier}.`);
                 }
             }
 
             const fracture = getRadioValue('fracture', prefix);
             const fractureTypeLocation = getInputValue('fractureTypeLocation', prefix);
             if (fracture === 'Yes' && fractureTypeLocation) {
-                findings.push(`Fracture in ${kneeName}: ${fractureTypeLocation}.`);
+                findings.push(`Fracture${nameQualifier}: ${fractureTypeLocation}.`);
             }
 
             const jointEffusion = getRadioValue('jointEffusion', prefix);
             if (jointEffusion && jointEffusion !== 'None') {
-                findings.push(`${jointEffusion} joint effusion in ${kneeName}.`);
+                findings.push(`${jointEffusion} joint effusion${nameQualifier}.`);
             }
 
             const vascularCalcification = getRadioValue('vascularCalcification', prefix);
             if (vascularCalcification === 'Present') {
-                findings.push(`Vascular calcifications are present in ${kneeName}.`);
+                findings.push(`Vascular calcifications are present${nameQualifier}.`);
             }
 
             const implants = getRadioValue('implants', prefix);
@@ -769,11 +776,11 @@
 
             if (implants === 'Yes') {
                 if (implantType === 'TKR') {
-                    findings.push(`Total knee replacement present in ${kneeName}.`);
+                    findings.push(`Total knee replacement present${nameQualifier}.`);
                 } else if (implantType === 'Partial knee replacement') {
-                    findings.push(`Partial knee replacement present in ${kneeName}, involving the ${partialKneeCompartment || 'unspecified'} compartment.`);
+                    findings.push(`Partial knee replacement present${nameQualifier}, involving the ${partialKneeCompartment || 'unspecified'} compartment.`);
                 } else if (implantType === 'Others' && otherImplantType) {
-                    findings.push(`Other implants present in ${kneeName}: ${otherImplantType}.`);
+                    findings.push(`Other implants present${nameQualifier}: ${otherImplantType}.`);
                 }
             }
 
@@ -781,7 +788,7 @@
             const lesionRegion = getInputValue('lesionRegion', prefix);
             const lesionSize = getInputValue('lesionSize', prefix);
             if (lesion === 'Yes' && (lesionRegion || lesionSize)) {
-                let lesionText = `Lesion identified in ${kneeName}`;
+                let lesionText = `Lesion identified${nameQualifier}`;
                 if (lesionRegion) lesionText += ` in the ${lesionRegion}`;
                 if (lesionSize) lesionText += ` measuring ${lesionSize}`;
                 findings.push(lesionText + '.');
@@ -790,7 +797,7 @@
             const postOpStatus = getRadioValue('postOpStatus', prefix);
             const postOpDescription = getInputValue('postOpDescription', prefix);
             if (postOpStatus === 'Yes' && postOpDescription) {
-                findings.push(`Post-operative status in ${kneeName}: ${postOpDescription}.`);
+                findings.push(`Post-operative status${nameQualifier}: ${postOpDescription}.`);
             }
 
             return findings;
@@ -817,14 +824,14 @@
             }
 
             if (laterality === 'Right') {
-                const rightFindings = generateKneeFindings('right_', 'right knee');
+                const rightFindings = generateKneeFindings('right_', 'right knee', laterality);
                 allFindings = allFindings.concat(rightFindings);
             } else if (laterality === 'Left') {
-                const leftFindings = generateKneeFindings('left_', 'left knee');
+                const leftFindings = generateKneeFindings('left_', 'left knee', laterality);
                 allFindings = allFindings.concat(leftFindings);
             } else if (laterality === 'Bilateral') {
-                const rightFindings = generateKneeFindings('right_', 'right knee');
-                const leftFindings = generateKneeFindings('left_', 'left knee');
+                const rightFindings = generateKneeFindings('right_', 'right knee', laterality);
+                const leftFindings = generateKneeFindings('left_', 'left knee', laterality);
                 allFindings = allFindings.concat(rightFindings).concat(leftFindings);
             }
 
