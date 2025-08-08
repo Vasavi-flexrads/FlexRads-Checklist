@@ -434,9 +434,56 @@
             sectionDiv.innerHTML = `
                 <h3 class="text-xl mb-4">${h3Title}</h3>
 
-                <!-- 1. Degenerative Changes -->
+                <!-- 1. Hardwares -->
                 <div class="mb-4 p-3 border border-gray-800 rounded-md">
-                    <label class="block">1. Degenerative changes:</label>
+                    <label class="block">1. Hardwares:</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="${prefix}hardwares" value="Yes"> Yes
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="${prefix}hardwares" value="No" checked> No
+                        </label>
+                    </div>
+                    <div id="${prefix}hardwaresDetails" class="hidden mt-2 p-2 border border-gray-700 rounded-md">
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="${prefix}hardwareTypeKnee" value="TKR"> TKR (Total Knee Replacement)
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="${prefix}hardwareTypeKnee" value="Partial knee replacement"> Partial knee replacement
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="${prefix}hardwareTypeKnee" value="Others"> Others
+                            </label>
+                        </div>
+                        <div id="${prefix}otherHardwaresDetailsKnee" class="hidden mt-2">
+                            <label for="${prefix}otherHardwareTypeKnee" class="block">Specify Other:</label>
+                            <input type="text" id="${prefix}otherHardwareTypeKnee" placeholder="e.g., Screws, plates">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Acute post surgical changes -->
+                <div class="mb-4 p-3 border border-gray-800 rounded-md">
+                    <label class="block">2. Acute post surgical changes:</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="${prefix}acutePostOpChanges" value="Yes"> Yes
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="${prefix}acutePostOpChanges" value="No" checked> No
+                        </label>
+                    </div>
+                    <div id="${prefix}acutePostOpDetails" class="hidden mt-2">
+                        <label for="${prefix}acutePostOpDescription" class="block">Description:</label>
+                        <input type="text" id="${prefix}acutePostOpDescription" placeholder="e.g., Status post ACL reconstruction">
+                    </div>
+                </div>
+
+                <!-- 3. Degenerative Changes -->
+                <div class="mb-4 p-3 border border-gray-800 rounded-md">
+                    <label class="block">3. Degenerative changes:</label>
                     <div class="radio-group">
                         <label class="radio-option">
                             <input type="radio" name="${prefix}degenerativeChanges" value="Yes"> Yes
@@ -516,26 +563,47 @@
                     </div>
                 </div>
 
-                <!-- 2. Fracture -->
+                <!-- 4. Fracture followup -->
                 <div class="mb-4 p-3 border border-gray-800 rounded-md">
-                    <label class="block">2. Fracture:</label>
+                    <label class="block">4. Fracture followup:</label>
                     <div class="radio-group">
                         <label class="radio-option">
-                            <input type="radio" name="${prefix}fracture" value="Yes"> Yes
+                            <input type="radio" name="${prefix}fractureFollowup" value="Yes"> Yes
                         </label>
                         <label class="radio-option">
-                            <input type="radio" name="${prefix}fracture" value="No" checked> No
+                            <input type="radio" name="${prefix}fractureFollowup" value="No" checked> No
                         </label>
                     </div>
-                    <div id="${prefix}fractureDetails" class="hidden mt-2">
-                        <label for="${prefix}fractureTypeLocation" class="block">Type and Location:</label>
-                        <input type="text" id="${prefix}fractureTypeLocation" placeholder="e.g., Tibial plateau fracture, non-displaced">
+                    <div id="${prefix}fractureFollowupDetails" class="hidden mt-2">
+                        <label for="${prefix}oldHealedFractureRegion" class="block">Old healed fracture, region:</label>
+                        <input type="text" id="${prefix}oldHealedFractureRegion" placeholder="e.g., Proximal tibia">
+                        <label for="${prefix}healingFractureRegion" class="block">Healing fracture, region:</label>
+                        <input type="text" id="${prefix}healingFractureRegion" placeholder="e.g., Distal femur">
                     </div>
                 </div>
 
-                <!-- 3. Joint Effusion -->
+                <!-- 5. Acute fracture -->
                 <div class="mb-4 p-3 border border-gray-800 rounded-md">
-                    <label class="block">3. Joint effusion:</label>
+                    <label class="block">5. Acute fracture:</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="${prefix}acuteFracture" value="Yes"> Yes
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="${prefix}acuteFracture" value="No" checked> No
+                        </label>
+                    </div>
+                    <div id="${prefix}acuteFractureDetails" class="hidden mt-2">
+                        <label for="${prefix}acuteFractureRegion" class="block">Region:</label>
+                        <input type="text" id="${prefix}acuteFractureRegion" placeholder="e.g., Tibial plateau">
+                        <label for="${prefix}acuteFractureType" class="block">Type:</label>
+                        <input type="text" id="${prefix}acuteFractureType" placeholder="e.g., Non-displaced, comminuted">
+                    </div>
+                </div>
+
+                <!-- 6. Joint Effusion -->
+                <div class="mb-4 p-3 border border-gray-800 rounded-md">
+                    <label class="block">6. Joint effusion:</label>
                     <div class="radio-group">
                         <label class="radio-option">
                             <input type="radio" name="${prefix}jointEffusion" value="None" checked> None
@@ -552,9 +620,9 @@
                     </div>
                 </div>
 
-                <!-- 4. Vascular Calcification -->
+                <!-- 7. Vascular Calcification -->
                 <div class="mb-4 p-3 border border-gray-800 rounded-md">
-                    <label class="block">4. Vascular calcification:</label>
+                    <label class="block">7. Vascular calcification:</label>
                     <div class="radio-group">
                         <label class="radio-option">
                             <input type="radio" name="${prefix}vascularCalcification" value="Present"> Present
@@ -565,43 +633,9 @@
                     </div>
                 </div>
 
-                <!-- 5. Any Implants -->
+                <!-- 8. Lesion -->
                 <div class="mb-4 p-3 border border-gray-800 rounded-md">
-                    <label class="block">5. Any Implants:</label>
-                    <div class="radio-group">
-                        <label class="radio-option">
-                            <input type="radio" name="${prefix}implants" value="Yes"> Yes
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="${prefix}implants" value="No" checked> No
-                        </label>
-                    </div>
-                    <div id="${prefix}implantsDetails" class="hidden mt-2 p-2 border border-gray-700 rounded-md">
-                        <div class="radio-group">
-                            <label class="radio-option">
-                                <input type="radio" name="${prefix}implantType" value="TKR"> TKR (Total Knee Replacement)
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="${prefix}implantType" value="Partial knee replacement"> Partial knee replacement
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="${prefix}implantType" value="Others"> Others
-                            </label>
-                        </div>
-                        <div id="${prefix}partialKneeDetails" class="hidden mt-2">
-                            <label for="${prefix}partialKneeCompartment" class="block">Compartment:</label>
-                            <input type="text" id="${prefix}partialKneeCompartment" placeholder="e.g., Medial">
-                        </div>
-                        <div id="${prefix}otherImplantsDetails" class="hidden mt-2">
-                            <label for="${prefix}otherImplantType" class="block">Specify Other:</label>
-                            <input type="text" id="${prefix}otherImplantType" placeholder="e.g., Screws, plates">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 6. Lesion -->
-                <div class="mb-4 p-3 border border-gray-800 rounded-md">
-                    <label class="block">6. Lesion:</label>
+                    <label class="block">8. Lesion:</label>
                     <div class="radio-group">
                         <label class="radio-option">
                             <input type="radio" name="${prefix}lesion" value="Yes"> Yes
@@ -615,30 +649,40 @@
                         <input type="text" id="${prefix}lesionRegion" placeholder="e.g., Distal femur">
                         <label for="${prefix}lesionSize" class="block">Size:</label>
                         <input type="text" id="${prefix}lesionSize" placeholder="e.g., 2x3 cm">
-                    </div>
-                </div>
-
-                <!-- 7. Post op -->
-                <div class="mb-4 p-3 border border-gray-800 rounded-md">
-                    <label class="block">7. Post op:</label>
-                    <div class="radio-group">
-                        <label class="radio-option">
-                            <input type="radio" name="${prefix}postOpStatus" value="Yes"> Yes
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="${prefix}postOpStatus" value="No" checked> No
-                        </label>
-                    </div>
-                    <div id="${prefix}postOpDetails" class="hidden mt-2">
-                        <label for="${prefix}postOpDescription" class="block">Description:</label>
-                        <input type="text" id="${prefix}postOpDescription" placeholder="e.g., Status post ACL reconstruction">
+                        <label for="${prefix}lesionCharacteristics" class="block">Characteristics:</label>
+                        <input type="text" id="${prefix}lesionCharacteristics" placeholder="e.g., Sclerotic, lytic">
                     </div>
                 </div>
             `;
 
             // Attach event listeners for the dynamically created elements
-            // This needs to be done AFTER the HTML is inserted into the DOM
             setTimeout(() => {
+                // Hardwares
+                const hardwaresRadios = sectionDiv.querySelectorAll(`input[name="${prefix}hardwares"]`);
+                const hardwaresDetails = sectionDiv.querySelector(`#${prefix}hardwaresDetails`);
+                updateConditionalVisibility(hardwaresRadios, hardwaresDetails);
+
+                const hardwareTypeKneeRadios = sectionDiv.querySelectorAll(`input[name="${prefix}hardwareTypeKnee"]`);
+                const otherHardwaresDetailsKnee = sectionDiv.querySelector(`#${prefix}otherHardwaresDetailsKnee`);
+                hardwareTypeKneeRadios.forEach(radio => {
+                    radio.addEventListener('change', () => {
+                        if (otherHardwaresDetailsKnee) otherHardwaresDetailsKnee.classList.add('hidden');
+                        const otherHardwareTypeKneeInput = sectionDiv.querySelector(`#${prefix}otherHardwareTypeKnee`);
+                        if (otherHardwareTypeKneeInput) otherHardwareTypeKneeInput.value = '';
+
+                        if (radio.value === 'Others') {
+                            if (otherHardwaresDetailsKnee) otherHardwaresDetailsKnee.classList.remove('hidden');
+                        }
+                    });
+                });
+
+
+                // Acute Post Op Changes
+                const acutePostOpChangesRadios = sectionDiv.querySelectorAll(`input[name="${prefix}acutePostOpChanges"]`);
+                const acutePostOpDetails = sectionDiv.querySelector(`#${prefix}acutePostOpDetails`);
+                updateConditionalVisibility(acutePostOpChangesRadios, acutePostOpDetails);
+
+                // Degenerative Changes
                 const degenerativeChangesRadios = sectionDiv.querySelectorAll(`input[name="${prefix}degenerativeChanges"]`);
                 const degenerativeDetails = sectionDiv.querySelector(`#${prefix}degenerativeDetails`);
                 updateConditionalVisibility(degenerativeChangesRadios, degenerativeDetails);
@@ -663,57 +707,39 @@
                     });
                 });
 
-                const fractureRadios = sectionDiv.querySelectorAll(`input[name="${prefix}fracture"]`);
-                const fractureDetails = sectionDiv.querySelector(`#${prefix}fractureDetails`);
-                updateConditionalVisibility(fractureRadios, fractureDetails);
+                // Fracture Followup
+                const fractureFollowupRadios = sectionDiv.querySelectorAll(`input[name="${prefix}fractureFollowup"]`);
+                const fractureFollowupDetails = sectionDiv.querySelector(`#${prefix}fractureFollowupDetails`);
+                updateConditionalVisibility(fractureFollowupRadios, fractureFollowupDetails);
 
-                const implantsRadios = sectionDiv.querySelectorAll(`input[name="${prefix}implants"]`);
-                const implantsDetails = sectionDiv.querySelector(`#${prefix}implantsDetails`);
-                updateConditionalVisibility(implantsRadios, implantsDetails);
+                // Acute Fracture
+                const acuteFractureRadios = sectionDiv.querySelectorAll(`input[name="${prefix}acuteFracture"]`);
+                const acuteFractureDetails = sectionDiv.querySelector(`#${prefix}acuteFractureDetails`);
+                updateConditionalVisibility(acuteFractureRadios, acuteFractureDetails);
 
-                const implantTypeRadios = sectionDiv.querySelectorAll(`input[name="${prefix}implantType"]`);
-                const partialKneeDetails = sectionDiv.querySelector(`#${prefix}partialKneeDetails`);
-                const otherImplantsDetails = sectionDiv.querySelector(`#${prefix}otherImplantsDetails`);
-                implantTypeRadios.forEach(radio => {
-                    radio.addEventListener('change', () => {
-                        if (partialKneeDetails) partialKneeDetails.classList.add('hidden');
-                        if (otherImplantsDetails) otherImplantsDetails.classList.add('hidden');
-                        const partialKneeCompartmentInput = sectionDiv.querySelector(`#${prefix}partialKneeCompartment`);
-                        if (partialKneeCompartmentInput) partialKneeCompartmentInput.value = '';
-                        const otherImplantTypeInput = sectionDiv.querySelector(`#${prefix}otherImplantType`);
-                        if (otherImplantTypeInput) otherImplantTypeInput.value = '';
-
-                        if (radio.value === 'Partial knee replacement') {
-                            if (partialKneeDetails) partialKneeDetails.classList.remove('hidden');
-                        } else if (radio.value === 'Others') {
-                            if (otherImplantsDetails) otherImplantsDetails.classList.remove('hidden');
-                        }
-                    });
-                });
-
+                // Lesion
                 const lesionRadios = sectionDiv.querySelectorAll(`input[name="${prefix}lesion"]`);
                 const lesionDetails = sectionDiv.querySelector(`#${prefix}lesionDetails`);
                 updateConditionalVisibility(lesionRadios, lesionDetails);
 
-                const postOpStatusRadios = sectionDiv.querySelectorAll(`input[name="${prefix}postOpStatus"]`);
-                const postOpDetails = sectionDiv.querySelector(`#${prefix}postOpDetails`);
-                updateConditionalVisibility(postOpStatusRadios, postOpDetails);
 
                 // Ensure initial default states for dynamically created elements
+                const hardwaresNoRadio = sectionDiv.querySelector(`input[name="${prefix}hardwares"][value="No"]`);
+                if (hardwaresNoRadio) hardwaresNoRadio.checked = true;
+                const acutePostOpChangesNoRadio = sectionDiv.querySelector(`input[name="${prefix}acutePostOpChanges"][value="No"]`);
+                if (acutePostOpChangesNoRadio) acutePostOpChangesNoRadio.checked = true;
                 const degNoRadio = sectionDiv.querySelector(`input[name="${prefix}degenerativeChanges"][value="No"]`);
                 if (degNoRadio) degNoRadio.checked = true;
-                const fractureNoRadio = sectionDiv.querySelector(`input[name="${prefix}fracture"][value="No"]`);
-                if (fractureNoRadio) fractureNoRadio.checked = true;
+                const fractureFollowupNoRadio = sectionDiv.querySelector(`input[name="${prefix}fractureFollowup"][value="No"]`);
+                if (fractureFollowupNoRadio) fractureFollowupNoRadio.checked = true;
+                const acuteFractureNoRadio = sectionDiv.querySelector(`input[name="${prefix}acuteFracture"][value="No"]`);
+                if (acuteFractureNoRadio) acuteFractureNoRadio.checked = true;
                 const jointEffusionNoneRadio = sectionDiv.querySelector(`input[name="${prefix}jointEffusion"][value="None"]`);
                 if (jointEffusionNoneRadio) jointEffusionNoneRadio.checked = true;
                 const vascularCalcificationAbsentRadio = sectionDiv.querySelector(`input[name="${prefix}vascularCalcification"][value="Absent"]`);
                 if (vascularCalcificationAbsentRadio) vascularCalcificationAbsentRadio.checked = true;
-                const implantsNoRadio = sectionDiv.querySelector(`input[name="${prefix}implants"][value="No"]`);
-                if (implantsNoRadio) implantsNoRadio.checked = true;
                 const lesionNoRadio = sectionDiv.querySelector(`input[name="${prefix}lesion"][value="No"]`);
                 if (lesionNoRadio) lesionNoRadio.checked = true;
-                const postOpStatusNoRadio = sectionDiv.querySelector(`input[name="${prefix}postOpStatus"][value="No"]`);
-                if (postOpStatusNoRadio) postOpStatusNoRadio.checked = true;
 
             }, 0);
 
@@ -770,9 +796,9 @@
                     </div>
                 </div>
 
-                <!-- 2. Post surgical changes / acute soft tissue changes -->
+                <!-- 2. Acute post surgical changes -->
                 <div class="mb-4 p-3 border border-gray-800 rounded-md">
-                    <label class="block">2. Post surgical changes / acute soft tissue changes:</label>
+                    <label class="block">2. Acute post surgical changes:</label>
                     <div class="radio-group">
                         <label class="radio-option">
                             <input type="radio" name="${prefix}postSurgicalAcuteSoftTissue" value="Yes"> Yes
@@ -801,7 +827,7 @@
                                 <input type="checkbox" name="${prefix}shoulderDegCompartments" value="Glenohumeral" data-severity-target="${prefix}ghDegSeverityDetails"> Glenohumeral
                             </label>
                             <label class="checkbox-option">
-                                <input type="checkbox" name="${prefix}shoulderDegCompartments" value="Acromioclavicular" data-severity-target="${prefix}acDegSeverityDetails"> AC
+                                <input type="checkbox" name="${prefix}shoulderDegCompartments" value="Acromioclavicular" data-severity-target="${prefix}acDegSeverityDetails"> Acromioclavicular
                             </label>
                         </div>
                         <div id="${prefix}ghDegSeverityDetails" class="hidden mt-2">
@@ -819,7 +845,7 @@
                             </div>
                         </div>
                         <div id="${prefix}acDegSeverityDetails" class="hidden mt-2">
-                            <label class="block mb-2">AC Severity:</label>
+                            <label class="block mb-2">Acromioclavicular Severity:</label>
                             <div class="radio-group">
                                 <label class="radio-option">
                                     <input type="radio" name="${prefix}acDegSeverity" value="Mild"> Mild
@@ -841,26 +867,7 @@
                                 <input type="radio" name="${prefix}shoulderOsteophyte" value="No" checked> No
                             </label>
                         </div>
-                        <label class="block mt-4 mb-2">Joint space narrowing:</label>
-                        <div class="radio-group">
-                            <label class="radio-option">
-                                <input type="radio" name="${prefix}shoulderJointSpaceNarrowing" value="Yes"> Yes
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="${prefix}shoulderJointSpaceNarrowing" value="No" checked> No
-                            </label>
-                        </div>
-                        <div id="${prefix}shoulderNarrowingDetails" class="hidden mt-2 p-2 border border-gray-700 rounded-md">
-                            <label class="block mb-2">Joints (multi-select):</label>
-                            <div class="checkbox-group">
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="${prefix}shoulderNarrowingJoints" value="Glenohumeral joint"> Glenohumeral joint
-                                </label>
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="${prefix}shoulderNarrowingJoints" value="AC joint"> AC joint
-                                </label>
-                            </div>
-                        </div>
+                        <!-- Removed: Joint space narrowing section from shoulder degenerative details -->
                     </div>
                 </div>
 
@@ -996,9 +1003,10 @@
                     });
                 });
 
-                const shoulderJointSpaceNarrowingRadios = sectionDiv.querySelectorAll(`input[name="${prefix}shoulderJointSpaceNarrowing"]`);
-                const shoulderNarrowingDetails = sectionDiv.querySelector(`#${prefix}shoulderNarrowingDetails`);
-                updateConditionalVisibility(shoulderJointSpaceNarrowingRadios, shoulderNarrowingDetails);
+                // Removed: Joint space narrowing from shoulder degenerative details
+                // const shoulderJointSpaceNarrowingRadios = sectionDiv.querySelectorAll(`input[name="${prefix}shoulderJointSpaceNarrowing"]`);
+                // const shoulderNarrowingDetails = sectionDiv.querySelector(`#${prefix}shoulderNarrowingDetails`);
+                // updateConditionalVisibility(shoulderJointSpaceNarrowingRadios, shoulderNarrowingDetails);
 
 
                 // Fracture followup
@@ -1025,8 +1033,7 @@
                 if (degNoRadio) degNoRadio.checked = true;
                 const shoulderOsteophyteNoRadio = sectionDiv.querySelector(`input[name="${prefix}shoulderOsteophyte"][value="No"]`);
                 if (shoulderOsteophyteNoRadio) shoulderOsteophyteNoRadio.checked = true;
-                const shoulderJointSpaceNarrowingNoRadio = sectionDiv.querySelector(`input[name="${prefix}shoulderJointSpaceNarrowing"][value="No"]`);
-                if (shoulderJointSpaceNarrowingNoRadio) shoulderJointSpaceNarrowingNoRadio.checked = true;
+                // Removed: shoulderJointSpaceNarrowingNoRadio for shoulder
                 const fractureFollowupNoRadio = sectionDiv.querySelector(`input[name="${prefix}fractureFollowup"][value="No"]`);
                 if (fractureFollowupNoRadio) fractureFollowupNoRadio.checked = true;
                 const acuteFractureNoRadio = sectionDiv.querySelector(`input[name="${prefix}acuteFracture"][value="No"]`);
@@ -1327,7 +1334,8 @@
                                 targetElement.classList.remove('hidden');
                             } else {
                                 targetElement.classList.add('hidden');
-                                targetElement.querySelector('input[type="text"]').value = ''; // Clear input if unchecked
+                                const input = targetElement.querySelector('input[type="text"]');
+                                if (input) input.value = ''; // Clear input if unchecked
                             }
                         }
                     });
@@ -1337,7 +1345,7 @@
                 const hipHardwareAbsentRadio = sectionDiv.querySelector(`input[name="${prefix}hipHardware"][value="Absent"]`);
                 if (hipHardwareAbsentRadio) hipHardwareAbsentRadio.checked = true;
                 const hipDegNoRadio = sectionDiv.querySelector(`input[name="${prefix}hipDegenerativeChanges"][value="No"]`);
-                if (hipDegNoRadio) hipDegenerativeChangesRadios.checked = true;
+                if (hipDegNoRadio) hipDegNoRadio.checked = true;
                 const hipJointSpaceNarrowingNoRadio = sectionDiv.querySelector(`input[name="${prefix}hipJointSpaceNarrowing"][value="No"]`);
                 if (hipJointSpaceNarrowingNoRadio) hipJointSpaceNarrowingNoRadio.checked = true;
                 const hipOsteophytesNoRadio = sectionDiv.querySelector(`input[name="${prefix}hipOsteophytes"][value="No"]`);
@@ -1459,6 +1467,27 @@
             const findings = [];
             const nameQualifier = (selectedLaterality === 'Bilateral') ? ` in ${kneeName}` : '';
 
+            // 1. Hardwares
+            const hardwares = getRadioValue('hardwares', prefix);
+            if (hardwares === 'Yes') {
+                const hardwareTypeKnee = getRadioValue('hardwareTypeKnee', prefix);
+                const otherHardwareTypeKnee = getInputValue('otherHardwareTypeKnee', prefix);
+                if (hardwareTypeKnee === 'Others' && otherHardwareTypeKnee) {
+                    findings.push(`Hardwares present${nameQualifier}: ${otherHardwareTypeKnee}.`);
+                } else if (hardwareTypeKnee) {
+                    findings.push(`Hardwares present${nameQualifier}: ${hardwareTypeKnee}.`);
+                } else {
+                    findings.push(`Hardwares present${nameQualifier}.`);
+                }
+            }
+
+            // 2. Acute post surgical changes
+            const acutePostOpChanges = getRadioValue('acutePostOpChanges', prefix);
+            if (acutePostOpChanges === 'Yes') {
+                findings.push(`Acute post surgical changes present${nameQualifier}.`);
+            }
+
+            // 3. Degenerative Changes
             const degenerativeChanges = getRadioValue('degenerativeChanges', prefix);
             const selectedCompartments = getCheckboxValues('compartments', prefix);
             const osteophyte = getRadioValue('osteophyte', prefix);
@@ -1482,51 +1511,53 @@
                 }
             }
 
-            const fracture = getRadioValue('fracture', prefix);
-            const fractureTypeLocation = getInputValue('fractureTypeLocation', prefix);
-            if (fracture === 'Yes' && fractureTypeLocation) {
-                findings.push(`Fracture${nameQualifier}: ${fractureTypeLocation}.`);
+            // 4. Fracture followup
+            const fractureFollowup = getRadioValue('fractureFollowup', prefix);
+            const oldHealedFractureRegion = getInputValue('oldHealedFractureRegion', prefix);
+            const healingFractureRegion = getInputValue('healingFractureRegion', prefix);
+            if (fractureFollowup === 'Yes') {
+                if (oldHealedFractureRegion) {
+                    findings.push(`Old healed fracture${nameQualifier}, region: ${oldHealedFractureRegion}.`);
+                }
+                if (healingFractureRegion) {
+                    findings.push(`Healing fracture${nameQualifier}, region: ${healingFractureRegion}.`);
+                }
             }
 
+            // 5. Acute fracture
+            const acuteFracture = getRadioValue('acuteFracture', prefix);
+            const acuteFractureRegion = getInputValue('acuteFractureRegion', prefix);
+            const acuteFractureType = getInputValue('acuteFractureType', prefix);
+            if (acuteFracture === 'Yes') {
+                let fractureText = `Acute fracture${nameQualifier}`;
+                if (acuteFractureRegion) fractureText += `, region: ${acuteFractureRegion}`;
+                if (acuteFractureType) fractureText += `, type: ${acuteFractureType}`;
+                findings.push(`${fractureText}.`);
+            }
+
+            // 6. Joint Effusion
             const jointEffusion = getRadioValue('jointEffusion', prefix);
             if (jointEffusion && jointEffusion !== 'None') {
                 findings.push(`${jointEffusion} joint effusion${nameQualifier}.`);
             }
 
+            // 7. Vascular Calcification
             const vascularCalcification = getRadioValue('vascularCalcification', prefix);
             if (vascularCalcification === 'Present') {
                 findings.push(`Vascular calcifications are present${nameQualifier}.`);
             }
 
-            const implants = getRadioValue('implants', prefix);
-            const implantType = implants === 'Yes' ? getRadioValue('implantType', prefix) : null;
-            const partialKneeCompartment = (implantType === 'Partial knee replacement' && implants === 'Yes') ? getInputValue('partialKneeCompartment', prefix) : '';
-            const otherImplantType = (implantType === 'Others' && implants === 'Yes') ? getInputValue('otherImplantType', prefix) : '';
-
-            if (implants === 'Yes') {
-                if (implantType === 'TKR') {
-                    findings.push(`Total knee replacement present${nameQualifier}.`);
-                } else if (implantType === 'Partial knee replacement') {
-                    findings.push(`Partial knee replacement present${nameQualifier}, involving the ${partialKneeCompartment || 'unspecified'} compartment.`);
-                } else if (implantType === 'Others' && otherImplantType) {
-                    findings.push(`Other implants present${nameQualifier}: ${otherImplantType}.`);
-                }
-            }
-
+            // 8. Lesion
             const lesion = getRadioValue('lesion', prefix);
             const lesionRegion = getInputValue('lesionRegion', prefix);
             const lesionSize = getInputValue('lesionSize', prefix);
-            if (lesion === 'Yes' && (lesionRegion || lesionSize)) {
+            const lesionCharacteristics = getInputValue('lesionCharacteristics', prefix);
+            if (lesion === 'Yes') {
                 let lesionText = `Lesion identified${nameQualifier}`;
                 if (lesionRegion) lesionText += ` in the ${lesionRegion}`;
                 if (lesionSize) lesionText += ` measuring ${lesionSize}`;
+                if (lesionCharacteristics) lesionText += ` (${lesionCharacteristics})`;
                 findings.push(lesionText + '.');
-            }
-
-            const postOpStatus = getRadioValue('postOpStatus', prefix);
-            const postOpDescription = getInputValue('postOpDescription', prefix);
-            if (postOpStatus === 'Yes' && postOpDescription) {
-                findings.push(`Post-operative status${nameQualifier}: ${postOpDescription}.`);
             }
 
             return findings;
@@ -1552,10 +1583,10 @@
                 }
             }
 
-            // 2. Post surgical changes / acute soft tissue changes
+            // 2. Acute post surgical changes
             const postSurgicalAcuteSoftTissue = getRadioValue('postSurgicalAcuteSoftTissue', prefix);
             if (postSurgicalAcuteSoftTissue === 'Yes') {
-                findings.push(`Post surgical changes / acute soft tissue changes present${nameQualifier}.`);
+                findings.push(`Acute post surgical changes present${nameQualifier}.`);
             }
 
             // 3. Degenerative Changes
@@ -1568,21 +1599,11 @@
                 }
                 if (degCompartments.includes('Acromioclavicular')) {
                     const acDegSeverity = getRadioValue('acDegSeverity', prefix);
-                    if (acDegSeverity) findings.push(`${acDegSeverity} degenerative changes${nameQualifier} in AC compartment.`);
+                    if (acDegSeverity) findings.push(`${acDegSeverity} degenerative changes${nameQualifier} in Acromioclavicular compartment.`);
                 }
                 const osteophyte = getRadioValue('shoulderOsteophyte', prefix);
-                if (osteophyte === 'Yes') { // Changed to 'Yes' as per new checklist
+                if (osteophyte === 'Yes') {
                     findings.push(`Osteophytes present${nameQualifier}.`);
-                }
-
-                const jointSpaceNarrowing = getRadioValue('shoulderJointSpaceNarrowing', prefix);
-                if (jointSpaceNarrowing === 'Yes') {
-                    const narrowingJoints = getCheckboxValues('shoulderNarrowingJoints', prefix);
-                    if (narrowingJoints.length > 0) {
-                        findings.push(`Joint space narrowing${nameQualifier} in ${narrowingJoints.join(', ')}.`);
-                    } else {
-                        findings.push(`Joint space narrowing present${nameQualifier}.`); // Fallback if no specific joint selected
-                    }
                 }
             }
 
