@@ -1,0 +1,103 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+/* Custom scrollbar for dark theme */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #374151;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #6b7280;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* FlexRads theme button styles */
+.btn-gradient {
+  @apply bg-gradient-to-r from-orange-500 to-red-500 text-white font-medium py-2 px-4 rounded-lg shadow-lg transform transition-all duration-200 hover:from-orange-600 hover:to-red-600 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-orange-300;
+}
+
+.btn-gradient-secondary {
+  @apply bg-gradient-to-r from-orange-400 to-orange-600 text-white font-medium py-2 px-4 rounded-lg shadow-lg transform transition-all duration-200 hover:from-orange-500 hover:to-orange-700 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-orange-300;
+}
+
+/* Medical form styles - Dark theme optimized */
+.medical-input {
+  @apply w-full px-4 py-3 rounded-lg border border-gray-600 focus:ring-2 focus:ring-gray-500 focus:border-gray-500 transition-all duration-200 bg-gray-800/90 backdrop-blur-sm text-gray-100 placeholder-gray-400;
+}
+
+.medical-textarea {
+  @apply w-full px-4 py-3 rounded-lg border border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 bg-gray-800/90 backdrop-blur-sm resize-none text-gray-100 placeholder-gray-400;
+}
+
+/* Card styles - Dark theme optimized */
+.medical-card {
+  @apply bg-gray-800/90 backdrop-blur-sm rounded-xl shadow-lg border border-gray-700/50 p-6 transition-all duration-200 hover:shadow-xl hover:border-orange-500/30;
+}
+
+/* Animation classes */
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Glow effects for FlexRads theme */
+.glow-orange {
+  box-shadow: 0 0 20px rgba(249, 115, 22, 0.3);
+}
+
+.glow-orange-strong {
+  box-shadow: 0 0 30px rgba(249, 115, 22, 0.5);
+}
