@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { useTheme } from '../../contexts/ThemeContext'
 import { Check, ChevronDown, ChevronUp } from 'lucide-react'
 
@@ -68,6 +68,34 @@ const ChecklistForm = ({ studyData, onSelectionChange, selectedFindings }) => {
       // onSelectionChange call is now handled in useEffect
       return newData
     })
+  }
+
+  const toggleSection = (sectionKey) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [sectionKey]: !prev[sectionKey]
+    }))
+  }
+
+  // Check if a sub-item should be shown based on show_when condition
+  const checkShowWhen = (subItem, side) => {
+    if (!subItem.show_when) return true
+    
+    const condition = subItem.show_when
+    const sideData = formData[side] || {}
+    
+    if (condition.includes('_includes_')) {
+      const [fieldName, value] = condition.split('_includes_')
+      const fieldValue = sideData[fieldName]
+      return Array.isArray(fieldValue) && fieldValue.includes(value)
+    }
+    
+    if (condition.includes('_equals_')) {
+      const [fieldName, value] = condition.split('_equals_')
+      return sideData[fieldName] === value
+    }
+    
+    return true
   }
 
   const renderInput = (item, side, parentValue = null) => {
@@ -164,60 +192,40 @@ const ChecklistForm = ({ studyData, onSelectionChange, selectedFindings }) => {
     }
   }
 
-  const toggleSection = (sectionKey) => {
-    setExpandedSections(prev => ({
-      ...prev,
-      [sectionKey]: !prev[sectionKey]
-    }))
-  }
-
-  const renderDegenerativeChangesSection = (side, compartments) => {
-    if (!compartments || compartments.length === 0) return null
-
+  // Render compartment-specific degenerative changes questions
+  const renderDegenerativeChangesSection = (side, selectedCompartments) => {
+    const sectionKey = `${side}_degenerative_changes`
+    const isExpanded = expandedSections[sectionKey] !== false // Default to expanded
+    
     return (
-      <div className='space-y-4'>
-        {compartments.map((compartment) => {
-          const sectionKey = `${side}_${compartment.toLowerCase()}`
-          const isExpanded = expandedSections[sectionKey]
-          const severity = formData[side]?.[`${compartment.toLowerCase()}_severity`]
-          const osteophytes = formData[side]?.[`${compartment.toLowerCase()}_osteophytes`]
-          const hasValues = severity || osteophytes
-
-          return (
-            <div key={compartment} className='border border-orange-500/20 rounded-lg overflow-hidden'>
-              <button
-                type='button'
-                onClick={() => toggleSection(sectionKey)}
-                className={`w-full p-4 text-left flex items-center justify-between transition-all duration-200 ${
-                  hasValues
-                    ? 'bg-orange-900/30 border-orange-500/40'
-                    : 'bg-gray-800/30 hover:bg-gray-800/50'
-                }`}
-              >
-                <div>
-                  <h4 className={`font-medium ${theme.colors.text.primary}`}>
-                    {compartment} Compartment
-                  </h4>
-                  {hasValues && (
-                    <div className='text-sm text-orange-400 mt-1'>
-                      {severity && `Severity: ${severity}`}
-                      {severity && osteophytes && ' • '}
-                      {osteophytes && `Osteophytes: ${osteophytes}`}
-                    </div>
-                  )}
-                </div>
-                {isExpanded ? (
-                  <ChevronUp className='h-4 w-4 text-orange-500' />
-                ) : (
-                  <ChevronDown className='h-4 w-4 text-orange-500' />
-                )}
-              </button>
-              
-              {isExpanded && (
-                <div className='p-4 bg-gray-800/20 border-t border-orange-500/20 space-y-4'>
+      <div className='border border-orange-500/20 rounded-lg overflow-hidden'>
+        <button
+          type='button'
+          onClick={() => toggleSection(sectionKey)}
+          className='w-full p-4 text-left flex items-center justify-between bg-orange-900/20 hover:bg-orange-900/30 transition-all duration-200'
+        >
+          <h4 className={`font-medium ${theme.colors.text.primary}`}>
+            Compartment-specific assessments
+          </h4>
+          {isExpanded ? (
+            <ChevronUp className='h-4 w-4 text-orange-500' />
+          ) : (
+            <ChevronDown className='h-4 w-4 text-orange-500' />
+          )}
+        </button>
+        
+        {isExpanded && (
+          <div className='p-4 bg-gray-800/10 border-t border-orange-500/20 space-y-6'>
+            {selectedCompartments.map(compartment => (
+              <div key={compartment} className='space-y-4'>
+                <h5 className={`text-sm font-semibold ${theme.colors.text.accent} border-b border-orange-500/20 pb-1`}>
+                  {compartment} Compartment
+                </h5>
+                
+                <div className='ml-4 space-y-3'>
                   <div>
-                    <label className={`block text-sm font-medium ${theme.colors.text.primary} mb-2`}>
-                      Severity
+                    <label className={`block text-xs font-medium ${theme.colors.text.primary} mb-2`}>
+                      {compartment} Compartment Severity
                     </label>
                     {renderInput({
                       id: `${compartment.toLowerCase()}_severity`,
@@ -227,8 +235,8 @@ const ChecklistForm = ({ studyData, onSelectionChange, selectedFindings }) => {
                   </div>
                   
                   <div>
-                    <label className={`block text-sm font-medium ${theme.colors.text.primary} mb-2`}>
-                      Osteophytes
+                    <label className={`block text-xs font-medium ${theme.colors.text.primary} mb-2`}>
+                      {compartment} Compartment Osteophytes
                     </label>
                     {renderInput({
                       id: `${compartment.toLowerCase()}_osteophytes`,
@@ -237,19 +245,209 @@ const ChecklistForm = ({ studyData, onSelectionChange, selectedFindings }) => {
                     }, side)}
                   </div>
                 </div>
-              )}
-            </div>
-          )
-        })}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     )
   }
 
-  const renderFractureFollowupSection = (side, followupType) => {
-    if (!followupType) return null
+  // Render joint-specific degenerative changes questions for shoulder
+  const renderShoulderDegenerativeChangesSection = (side, selectedJoints) => {
+    const sectionKey = `${side}_shoulder_degenerative_changes`
+    const isExpanded = expandedSections[sectionKey] !== false // Default to expanded
+    
+    return (
+      <div className='border border-orange-500/20 rounded-lg overflow-hidden'>
+        <button
+          type='button'
+          onClick={() => toggleSection(sectionKey)}
+          className='w-full p-4 text-left flex items-center justify-between bg-orange-900/20 hover:bg-orange-900/30 transition-all duration-200'
+        >
+          <h4 className={`font-medium ${theme.colors.text.primary}`}>
+            Joint-specific assessments
+          </h4>
+          {isExpanded ? (
+            <ChevronUp className='h-4 w-4 text-orange-500' />
+          ) : (
+            <ChevronDown className='h-4 w-4 text-orange-500' />
+          )}
+        </button>
+        
+        {isExpanded && (
+          <div className='p-4 bg-gray-800/10 border-t border-orange-500/20 space-y-6'>
+            {selectedJoints.map(joint => (
+              <div key={joint} className='space-y-4'>
+                <h5 className={`text-sm font-semibold ${theme.colors.text.accent} border-b border-orange-500/20 pb-1`}>
+                  {joint}
+                </h5>
+                
+                <div className='ml-4 space-y-3'>
+                  {joint.includes('AC') || joint.includes('Acromioclavicular') ? (
+                    <>
+                      <div>
+                        <label className={`block text-xs font-medium ${theme.colors.text.primary} mb-2`}>
+                          AC Joint Severity
+                        </label>
+                        {renderInput({
+                          id: 'ac_severity',
+                          type: 'radio',
+                          options: ['Mild', 'Moderate', 'Severe']
+                        }, side)}
+                      </div>
+                      
+                      <div>
+                        <label className={`block text-xs font-medium ${theme.colors.text.primary} mb-2`}>
+                          AC Joint Osteophytes
+                        </label>
+                        {renderInput({
+                          id: 'ac_osteophytes',
+                          type: 'radio',
+                          options: ['Present', 'Absent']
+                        }, side)}
+                      </div>
+                      
+                      <div>
+                        <label className={`block text-xs font-medium ${theme.colors.text.primary} mb-2`}>
+                          AC Joint Space Widening (measurement)
+                        </label>
+                        {renderInput({
+                          id: 'ac_joint_space_narrowing',
+                          type: 'text',
+                          placeholder: 'e.g., 2mm'
+                        }, side)}
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div>
+                        <label className={`block text-xs font-medium ${theme.colors.text.primary} mb-2`}>
+                          Glenohumeral Joint Severity
+                        </label>
+                        {renderInput({
+                          id: 'glenohumeral_severity',
+                          type: 'radio',
+                          options: ['Mild', 'Moderate', 'Severe']
+                        }, side)}
+                      </div>
+                      
+                      <div>
+                        <label className={`block text-xs font-medium ${theme.colors.text.primary} mb-2`}>
+                          Glenohumeral Joint Osteophytes
+                        </label>
+                        {renderInput({
+                          id: 'glenohumeral_osteophytes',
+                          type: 'radio',
+                          options: ['Present', 'Absent']
+                        }, side)}
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    )
+  }
 
+  // Render joint-specific degenerative changes questions for foot
+  const renderFootDegenerativeChangesSection = (side, selectedJoints) => {
+    const sectionKey = `${side}_foot_degenerative_changes`
+    const isExpanded = expandedSections[sectionKey] !== false // Default to expanded
+    
+    return (
+      <div className='border border-orange-500/20 rounded-lg overflow-hidden'>
+        <button
+          type='button'
+          onClick={() => toggleSection(sectionKey)}
+          className='w-full p-4 text-left flex items-center justify-between bg-orange-900/20 hover:bg-orange-900/30 transition-all duration-200'
+        >
+          <h4 className={`font-medium ${theme.colors.text.primary}`}>
+            Joint-specific severity assessments
+          </h4>
+          {isExpanded ? (
+            <ChevronUp className='h-4 w-4 text-orange-500' />
+          ) : (
+            <ChevronDown className='h-4 w-4 text-orange-500' />
+          )}
+        </button>
+        
+        {isExpanded && (
+          <div className='p-4 bg-gray-800/10 border-t border-orange-500/20 space-y-6'>
+            {selectedJoints.map(joint => (
+              <div key={joint} className='space-y-4'>
+                <h5 className={`text-sm font-semibold ${theme.colors.text.accent} border-b border-orange-500/20 pb-1`}>
+                  {joint} Severity
+                </h5>
+                
+                <div className='ml-4'>
+                  {renderInput({
+                    id: `${joint.toLowerCase().replace(/[()\s-]/g, '_')}_severity`,
+                    type: 'radio',
+                    options: ['Mild', 'Moderate', 'Severe']
+                  }, side)}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  // Render mandatory degenerative changes questions for foot
+  const renderFootMandatoryDegenerativeQuestions = (side) => {
+    return (
+      <div className='mt-6 space-y-4'>
+        <h4 className={`text-sm font-medium ${theme.colors.text.primary} mb-3 border-b border-orange-500/20 pb-2`}>
+          Mandatory assessments:
+        </h4>
+        
+        <div className='space-y-4'>
+          <div>
+            <label className={`block text-sm font-medium ${theme.colors.text.primary} mb-2`}>
+              Joint space narrowing
+            </label>
+            {renderInput({
+              id: 'joint_space_narrowing',
+              type: 'radio',
+              options: ['Present', 'Absent']
+            }, side)}
+          </div>
+          
+          <div>
+            <label className={`block text-sm font-medium ${theme.colors.text.primary} mb-2`}>
+              Osteophytes
+            </label>
+            {renderInput({
+              id: 'osteophytes',
+              type: 'radio',
+              options: ['Present', 'Absent']
+            }, side)}
+          </div>
+          
+          <div>
+            <label className={`block text-sm font-medium ${theme.colors.text.primary} mb-2`}>
+              Sclerotic changes
+            </label>
+            {renderInput({
+              id: 'sclerotic_changes',
+              type: 'radio',
+              options: ['Present', 'Absent']
+            }, side)}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Render fracture followup section
+  const renderFractureFollowupSection = (side, followupType) => {
     const sectionKey = `${side}_fracture_followup`
-    const isExpanded = expandedSections[sectionKey]
+    const isExpanded = expandedSections[sectionKey] !== false
     const region = formData[side]?.followup_region
     const hasValues = region
 
@@ -289,7 +487,7 @@ const ChecklistForm = ({ studyData, onSelectionChange, selectedFindings }) => {
             {renderInput({
               id: 'followup_region',
               type: 'text',
-              placeholder: 'e.g., Proximal tibia'
+              placeholder: 'e.g., Scapula, Clavicle'
             }, side)}
           </div>
         )}
@@ -297,36 +495,144 @@ const ChecklistForm = ({ studyData, onSelectionChange, selectedFindings }) => {
     )
   }
 
-  const renderConditionalItems = (item, side, currentValue, parentItem = null) => {
-    if (!item.conditional || !currentValue) return null
+  // Render AC joint separation measurement section
+  const renderAcSeparationSection = (side, grade) => {
+    const sectionKey = `${side}_ac_separation`
+    const isExpanded = expandedSections[sectionKey] !== false
+    const measurement = formData[side]?.ac_separation_measurement
+    const hasValues = measurement
 
-    // Handle regular conditional logic (parent → child)
+    return (
+      <div className='border border-orange-500/20 rounded-lg overflow-hidden mt-4'>
+        <button
+          type='button'
+          onClick={() => toggleSection(sectionKey)}
+          className={`w-full p-4 text-left flex items-center justify-between transition-all duration-200 ${
+            hasValues
+              ? 'bg-orange-900/30 border-orange-500/40'
+              : 'bg-gray-800/30 hover:bg-gray-800/50'
+          }`}
+        >
+          <div>
+            <h4 className={`font-medium ${theme.colors.text.primary}`}>
+              {grade} Details
+            </h4>
+            {hasValues && (
+              <div className='text-sm text-orange-400 mt-1'>
+                Measurement: {measurement}
+              </div>
+            )}
+          </div>
+          {isExpanded ? (
+            <ChevronUp className='h-4 w-4 text-orange-500' />
+          ) : (
+            <ChevronDown className='h-4 w-4 text-orange-500' />
+          )}
+        </button>
+        
+        {isExpanded && (
+          <div className='p-4 bg-gray-800/20 border-t border-orange-500/20'>
+            <label className={`block text-sm font-medium ${theme.colors.text.primary} mb-2`}>
+              Measurement
+            </label>
+            {renderInput({
+              id: 'ac_separation_measurement',
+              type: 'text',
+              placeholder: 'e.g., 5mm displacement'
+            }, side)}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  const renderConditionalItems = (item, side, currentValue) => {
+    if (!item.conditional || !currentValue) return null
+    
     if (item.conditional.condition && currentValue === item.conditional.condition) {
       // Special handling for degenerative changes
       if (item.id === 'degenerative_changes') {
-        const compartmentsItem = item.conditional.sub_items.find(subItem => subItem.id === 'compartments')
-        if (compartmentsItem) {
-          const selectedCompartments = formData[side]?.compartments || []
-          
-          return (
-            <div className='ml-6 mt-4 space-y-4 border-l-2 border-orange-500/30 pl-4'>
-              <div>
-                <label className={`block text-sm font-medium ${theme.colors.text.primary} mb-2`}>
-                  {compartmentsItem.label}
-                </label>
-                {renderInput(compartmentsItem, side)}
-              </div>
-              
-              {selectedCompartments.length > 0 && (
-                <div className='mt-4'>
-                  <h4 className={`text-sm font-medium ${theme.colors.text.primary} mb-3`}>
-                    Followup assessments:
-                  </h4>
-                  {renderDegenerativeChangesSection(side, selectedCompartments)}
+        if (studyData.study_type === 'Knee') {
+          // Knee-specific compartment handling
+          const compartmentsItem = item.conditional.sub_items.find(subItem => subItem.id === 'compartments')
+          if (compartmentsItem) {
+            const selectedCompartments = formData[side]?.compartments || []
+            
+            return (
+              <div className='ml-6 mt-4 space-y-4 border-l-2 border-orange-500/30 pl-4'>
+                <div>
+                  <label className={`block text-sm font-medium ${theme.colors.text.primary} mb-2`}>
+                    {compartmentsItem.label}
+                  </label>
+                  {renderInput(compartmentsItem, side)}
                 </div>
-              )}
-            </div>
-          )
+                
+                {selectedCompartments.length > 0 && (
+                  <div className='mt-4'>
+                    <h4 className={`text-sm font-medium ${theme.colors.text.primary} mb-3`}>
+                      Compartment-specific assessments:
+                    </h4>
+                    {renderDegenerativeChangesSection(side, selectedCompartments)}
+                  </div>
+                )}
+              </div>
+            )
+          }
+        } else if (studyData.study_type === 'Shoulder') {
+          // Shoulder-specific joint handling
+          const jointsItem = item.conditional.sub_items.find(subItem => subItem.id === 'joints')
+          if (jointsItem) {
+            const selectedJoints = formData[side]?.joints || []
+            
+            return (
+              <div className='ml-6 mt-4 space-y-4 border-l-2 border-orange-500/30 pl-4'>
+                <div>
+                  <label className={`block text-sm font-medium ${theme.colors.text.primary} mb-2`}>
+                    {jointsItem.label}
+                  </label>
+                  {renderInput(jointsItem, side)}
+                </div>
+                
+                {selectedJoints.length > 0 && (
+                  <div className='mt-4'>
+                    <h4 className={`text-sm font-medium ${theme.colors.text.primary} mb-3`}>
+                      Joint-specific assessments:
+                    </h4>
+                    {renderShoulderDegenerativeChangesSection(side, selectedJoints)}
+                  </div>
+                )}
+              </div>
+            )
+          }
+        } else if (studyData.study_type === 'Foot') {
+          // Foot-specific joint handling
+          const jointsItem = item.conditional.sub_items.find(subItem => subItem.id === 'joints')
+          if (jointsItem) {
+            const selectedJoints = formData[side]?.joints || []
+            
+            return (
+              <div className='ml-6 mt-4 space-y-4 border-l-2 border-orange-500/30 pl-4'>
+                <div>
+                  <label className={`block text-sm font-medium ${theme.colors.text.primary} mb-2`}>
+                    {jointsItem.label}
+                  </label>
+                  {renderInput(jointsItem, side)}
+                </div>
+                
+                {selectedJoints.length > 0 && (
+                  <div className='mt-4'>
+                    <h4 className={`text-sm font-medium ${theme.colors.text.primary} mb-3`}>
+                      Individual joint severity:
+                    </h4>
+                    {renderFootDegenerativeChangesSection(side, selectedJoints)}
+                  </div>
+                )}
+                
+                {/* Always show mandatory questions when degenerative changes = Yes */}
+                {renderFootMandatoryDegenerativeQuestions(side)}
+              </div>
+            )
+          }
         }
       }
       
@@ -358,14 +664,45 @@ const ChecklistForm = ({ studyData, onSelectionChange, selectedFindings }) => {
         }
       }
       
-      // Default conditional rendering for other items
+      // Special handling for AC joint separation
+      if (item.id === 'ac_joint_separation') {
+        const gradeItem = item.conditional.sub_items.find(subItem => subItem.id === 'ac_separation_grade')
+        if (gradeItem) {
+          const selectedGrade = formData[side]?.ac_separation_grade
+          
+          return (
+            <div className='ml-6 mt-4 space-y-4 border-l-2 border-orange-500/30 pl-4'>
+              <div>
+                <label className={`block text-sm font-medium ${theme.colors.text.primary} mb-2`}>
+                  {gradeItem.label}
+                </label>
+                {renderInput(gradeItem, side)}
+              </div>
+              
+              {selectedGrade && (
+                <div className='mt-4'>
+                  <h4 className={`text-sm font-medium ${theme.colors.text.primary} mb-3`}>
+                    Grade details:
+                  </h4>
+                  {renderAcSeparationSection(side, selectedGrade)}
+                </div>
+              )}
+            </div>
+          )
+        }
+      }
+      
+      // Default conditional rendering for other items - filter out show_when items that shouldn't be shown
       return (
         <div className='ml-6 mt-4 space-y-4 border-l-2 border-orange-500/30 pl-4'>
           {item.conditional.sub_items.map((subItem) => {
-            const subValue = formData[side]?.[subItem.id]
+            // Skip items that don't meet show_when conditions
+            if (!checkShowWhen(subItem, side)) {
+              return null
+            }
             
             // Skip compartment-specific items for degenerative changes (handled above)
-            if (item.id === 'degenerative_changes' && (subItem.id === 'compartments' || subItem.show_when)) {
+            if (item.id === 'degenerative_changes' && (subItem.id === 'compartments' || subItem.id === 'joints' || subItem.show_when)) {
               return null
             }
             
@@ -374,13 +711,19 @@ const ChecklistForm = ({ studyData, onSelectionChange, selectedFindings }) => {
               return null
             }
             
+            // Skip AC joint separation specific items (handled above)
+            if (item.id === 'ac_joint_separation' && (subItem.id === 'ac_separation_grade' || subItem.conditional_any)) {
+              return null
+            }
+            
+            const subValue = formData[side]?.[subItem.id]
             return (
               <div key={subItem.id}>
                 <label className={`block text-sm font-medium ${theme.colors.text.primary} mb-2`}>
                   {subItem.label}
                 </label>
                 {renderInput({ ...subItem, id: subItem.id }, side)}
-                {renderConditionalItems(subItem, side, subValue, item)}
+                {renderConditionalItems(subItem, side, subValue)}
               </div>
             )
           })}
@@ -413,7 +756,7 @@ const ChecklistForm = ({ studyData, onSelectionChange, selectedFindings }) => {
   const renderSideChecklist = (side, sideLabel) => (
     <div className='space-y-6'>
       <h3 className={`text-xl font-bold ${theme.colors.text.accent} border-b border-orange-500/30 pb-2`}>
-        {sideLabel} Knee Checklist Items:
+        {sideLabel} {studyData.study_type} Checklist Items:
       </h3>
       {studyData.checklist_items.map((item, index) => {
         const currentValue = formData[side]?.[item.id]

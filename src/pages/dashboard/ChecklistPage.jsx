@@ -35,11 +35,14 @@ const ChecklistPage = () => {
     
     if (currentStudyData) {
       if (laterality === 'Bilateral') {
-        report += `X-RAY BILATERAL KNEE\n\n`
+        report += `X-RAY BILATERAL ${currentStudyData.study_type.toUpperCase()}\n\n`
       } else {
-        report += `X-RAY ${laterality?.toUpperCase()} KNEE\n\n`
+        report += `X-RAY ${laterality?.toUpperCase()} ${currentStudyData.study_type.toUpperCase()}\n\n`
       }
     }
+
+
+    
     
     if (clinicalHistory.trim()) {
       report += `CLINICAL HISTORY:\n${clinicalHistory.trim()}\n\n`
@@ -58,17 +61,54 @@ const ChecklistPage = () => {
         const value = sideData[item.id]
         if (!value) return
         
-        // Only include positive findings
-        if (item.id === 'hardware' && value === 'Present') {
-          const hardwareType = sideData.hardware_type
-          if (hardwareType) {
-            if (hardwareType === 'Others') {
-              const otherDescription = sideData.hardware_other_description
-              if (otherDescription) {
-                findings.push(`Hardware present: ${otherDescription}`)
+        // Hardware findings (updated for foot)
+        if (item.id === 'hardware') {
+          if (currentStudyData.study_type === 'Foot' && value === 'Yes') {
+            const hardwareTypes = sideData.hardware_types
+            if (hardwareTypes && hardwareTypes.length > 0) {
+              const hardwareDetails = []
+              
+              hardwareTypes.forEach(hardware => {
+                let region = ''
+                switch (hardware) {
+                  case 'Arthrodesis and screw fixation':
+                    region = sideData.arthrodesis_region
+                    break
+                  case 'Plate and screw fixation':
+                    region = sideData.plate_screw_region
+                    break
+                  case 'K wire':
+                    region = sideData.kwire_region
+                    break
+                  case 'Screws':
+                    region = sideData.screws_region
+                    break
+                  case 'Staples':
+                    region = sideData.staples_region
+                    break
+                }
+                
+                let hardwareText = hardware
+                if (region) hardwareText += ` in ${region}`
+                hardwareDetails.push(hardwareText)
+              })
+              
+              if (hardwareDetails.length > 0) {
+                findings.push(`Hardware present: ${hardwareDetails.join(', ')}`)
               }
-            } else {
-              findings.push(`Hardware present: ${hardwareType}`)
+            }
+          } else if (value === 'Present') {
+            // Handle other study types (hip, shoulder, knee)
+            const hardwareType = sideData.hardware_type
+            if (hardwareType) {
+              if (hardwareType === 'Others') {
+                const otherDescription = sideData.hardware_other_description
+                if (otherDescription) {
+                  findings.push(`Hardware present: ${otherDescription}`)
+                }
+              } else {
+                findings.push(`Hardware present: ${hardwareType}`)
+              }
             }
           }
         }
@@ -78,39 +118,226 @@ const ChecklistPage = () => {
         }
         
         if (item.id === 'degenerative_changes' && value === 'Yes') {
-          const compartments = sideData.compartments
-          if (compartments && compartments.length > 0) {
-            const compartmentFindings = []
-            
-            compartments.forEach(compartment => {
-              const severity = sideData[`${compartment.toLowerCase()}_severity`]
-              const osteophytes = sideData[`${compartment.toLowerCase()}_osteophytes`]
+          // Handle foot-specific joints
+          if (currentStudyData.study_type === 'Foot') {
+            const joints = sideData.joints
+            if (joints && joints.length > 0) {
+              const jointFindings = []
               
-              let compartmentText = ''
-              if (severity) {
-                compartmentText += `${severity} degenerative changes in ${compartment.toLowerCase()} compartment`
-              } else {
-                compartmentText += `Degenerative changes in ${compartment.toLowerCase()} compartment`
+              joints.forEach(joint => {
+                const jointKey = joint.toLowerCase().replace(/[()\s-]/g, '_')
+                const severity = sideData[`${jointKey}_severity`]
+                
+                let jointText = ''
+                if (severity) {
+                  jointText = `${severity} degenerative changes in ${joint}`
+                } else {
+                  jointText = `Degenerative changes in ${joint}`
+                }
+                
+                jointFindings.push(jointText)
+              })
+              
+              if (jointFindings.length > 0) {
+                findings.push(jointFindings.join(', '))
               }
               
-              if (osteophytes === 'Present') {
-                compartmentText += ' with osteophytes'
-              }
+              // Add common features without "Additional features" label
+              const features = []
+              const jointSpaceNarrowing = sideData.joint_space_narrowing
+              const osteophytes = sideData.osteophytes
+              const scleroticChanges = sideData.sclerotic_changes
               
-              compartmentFindings.push(compartmentText)
-            })
+              if (jointSpaceNarrowing === 'Present') features.push('joint space narrowing present')
+              if (osteophytes === 'Present') features.push('osteophytes present')
+              if (scleroticChanges === 'Present') features.push('sclerotic changes present')
+              
+              if (features.length > 0) {
+                features.forEach(feature => findings.push(feature))
+              }
+            }
+          }
+          // Handle hip-specific degenerative changes
+          else if (currentStudyData.study_type === 'Hip') {
+            const severity = sideData.severity
+            const jointSpaceNarrowing = sideData.joint_space_narrowing
+            const osteophytes = sideData.osteophytes
+            const scleroticChanges = sideData.sclerotic_changes
+            const subchondralBoneCyst = sideData.subchondral_bone_cyst
             
-            // Join multiple compartments with comma and space
-            const finalText = compartmentFindings.join(', ')
-            findings.push(finalText)
+            let degenerativeText = ''
+            if (severity) {
+              degenerativeText += `${severity} degenerative changes`
+            } else {
+              degenerativeText += 'Degenerative changes'
+            }
+            
+            const features = []
+            if (jointSpaceNarrowing === 'Yes') features.push('joint space narrowing')
+            if (osteophytes === 'Yes') features.push('osteophytes')
+            if (scleroticChanges === 'Yes') features.push('sclerotic changes')
+            if (subchondralBoneCyst === 'Yes') features.push('subchondral bone cyst')
+            
+            if (features.length > 0) {
+              degenerativeText += ` with ${features.join(', ')}`
+            }
+            
+            findings.push(degenerativeText)
+          }
+          // Handle shoulder-specific joints
+          else if (currentStudyData.study_type === 'Shoulder') {
+            const joints = sideData.joints
+            if (joints && joints.length > 0) {
+              const jointFindings = []
+              
+              joints.forEach(joint => {
+                let jointText = ''
+                if (joint.includes('AC') || joint.includes('Acromioclavicular')) {
+                  const severity = sideData.ac_severity
+                  const osteophytes = sideData.ac_osteophytes
+                  const jointSpaceWidening = sideData.ac_joint_space_narrowing
+                  
+                  if (severity) {
+                    jointText += `${severity} degenerative changes in AC joint`
+                  } else {
+                    jointText += 'Degenerative changes in AC joint'
+                  }
+                  
+                  if (osteophytes === 'Present') {
+                    jointText += ' with osteophytes'
+                  }
+                  
+                  if (jointSpaceWidening) {
+                    jointText += `, joint space widening ${jointSpaceWidening}`
+                  }
+                } else if (joint.includes('Glenohumeral')) {
+                  const severity = sideData.glenohumeral_severity
+                  const osteophytes = sideData.glenohumeral_osteophytes
+                  
+                  if (severity) {
+                    jointText += `${severity} degenerative changes in glenohumeral joint`
+                  } else {
+                    jointText += 'Degenerative changes in glenohumeral joint'
+                  }
+                  
+                  if (osteophytes === 'Present') {
+                    jointText += ' with osteophytes'
+                  }
+                }
+                
+                if (jointText) {
+                  jointFindings.push(jointText)
+                }
+              })
+              
+              if (jointFindings.length > 0) {
+                findings.push(jointFindings.join(', '))
+              }
+            }
+          } else {
+            // Handle knee-specific compartments
+            const compartments = sideData.compartments
+            if (compartments && compartments.length > 0) {
+              const compartmentFindings = []
+              
+              compartments.forEach(compartment => {
+                const severity = sideData[`${compartment.toLowerCase()}_severity`]
+                const osteophytes = sideData[`${compartment.toLowerCase()}_osteophytes`]
+                
+                let compartmentText = ''
+                if (severity) {
+                  compartmentText += `${severity} degenerative changes in ${compartment.toLowerCase()} compartment`
+                } else {
+                  compartmentText += `Degenerative changes in ${compartment.toLowerCase()} compartment`
+                }
+                
+                if (osteophytes === 'Present') {
+                  compartmentText += ' with osteophytes'
+                }
+                
+                compartmentFindings.push(compartmentText)
+              })
+              
+              // Join multiple compartments with comma and space
+              const finalText = compartmentFindings.join(', ')
+              findings.push(finalText)
+            }
+          }
+        }
+        
+        // Foot-specific findings
+        if (item.id === 'calcaneal_spur' && value === 'Yes') {
+          const spurLocation = sideData.spur_location
+          if (spurLocation && spurLocation.length > 0) {
+            findings.push(`Calcaneal spur (${spurLocation.join(', ')})`)
+          } else {
+            findings.push('Calcaneal spur present')
+          }
+        }
+        
+        if (item.id === 'amputation' && value === 'Yes') {
+          const region = sideData.amputation_region
+          if (region) {
+            findings.push(`Amputation in ${region}`)
+          } else {
+            findings.push('Amputation present')
           }
         }
         
         if (item.id === 'deformity' && value === 'Yes') {
           const deformityType = sideData.deformity_type
           if (deformityType) {
-            findings.push(deformityType)
+            if (currentStudyData.study_type === 'Foot') {
+              if (deformityType === 'Hallux valgus deformity') {
+                const mtpChanges = sideData.hallux_valgus_mtp_changes
+                if (mtpChanges) {
+                  findings.push(`${deformityType} with ${mtpChanges.toLowerCase()} 1st MTP degenerative changes`)
+                } else {
+                  findings.push(deformityType)
+                }
+              } else if (deformityType === 'Flexion deformity') {
+                const region = sideData.flexion_deformity_region
+                if (region) {
+                  findings.push(`${deformityType} in ${region}`)
+                } else {
+                  findings.push(deformityType)
+                }
+              } else {
+                findings.push(deformityType)
+              }
+            } else {
+              // Handle hip, knee, shoulder deformities
+              findings.push(deformityType)
+            }
           }
+        }
+        
+        // Hip-specific findings
+        if (item.id === 'heterotrophic_calcification' && value === 'Present') {
+          findings.push('Heterotrophic calcification present')
+        }
+        
+        if (item.id === 'phleboliths' && value === 'Present') {
+          findings.push('Phleboliths present')
+        }
+        
+        // Shoulder-specific findings
+        if (item.id === 'rotator_cuff_calcification' && value === 'Yes') {
+          findings.push('Rotator cuff calcification present')
+        }
+        
+        if (item.id === 'dislocation_subluxation' && value === 'Yes') {
+          findings.push('Dislocation/subluxation present')
+        }
+        
+        if (item.id === 'ac_joint_separation' && value === 'Yes') {
+          const grade = sideData.ac_separation_grade
+          const measurement = sideData.ac_separation_measurement
+          
+          let separationText = 'AC joint separation'
+          if (grade) separationText += ` (${grade})`
+          if (measurement) separationText += `, ${measurement}`
+          findings.push(separationText)
         }
         
         if (item.id === 'acute_fracture' && value === 'Yes') {
@@ -130,16 +357,18 @@ const ChecklistPage = () => {
           }
         }
         
-        if (item.id === 'joint_effusion' && value !== 'None') {
+        // Knee-specific findings
+        if (item.id === 'joint_effusion' && value !== 'None' && currentStudyData.study_type === 'Knee') {
           findings.push(`${value} joint effusion`)
         }
         
-        if (item.id === 'vascular_calcification' && value === 'Present') {
-          findings.push('Vascular calcification present')
+        if (item.id === 'chondrocalcinosis' && value === 'Yes' && currentStudyData.study_type === 'Knee') {
+          findings.push('Chondrocalcinosis present')
         }
         
-        if (item.id === 'chondrocalcinosis' && value === 'Yes') {
-          findings.push('Chondrocalcinosis present')
+        // Common findings across multiple study types
+        if (item.id === 'vascular_calcification' && value === 'Present') {
+          findings.push('Vascular calcification present')
         }
         
         if (item.id === 'lesion' && value === 'Yes') {
@@ -163,21 +392,21 @@ const ChecklistPage = () => {
       const leftFindings = generateSideFindings('left', 'Left')
       
       if (rightFindings.length > 0) {
-        report += '\nRight knee:\n'
+        report += `\nRight ${currentStudyData.study_type.toLowerCase()}:\n`
         rightFindings.forEach((finding, index) => {
           report += `${index + 1}. ${finding}\n`
         })
       }
       
       if (leftFindings.length > 0) {
-        report += '\nLeft knee:\n'
+        report += `\nLeft ${currentStudyData.study_type.toLowerCase()}:\n`
         leftFindings.forEach((finding, index) => {
           report += `${index + 1}. ${finding}\n`
         })
       }
       
       if (rightFindings.length === 0 && leftFindings.length === 0) {
-        report += 'No significant abnormalities detected in bilateral knees.\n'
+        report += `No significant abnormalities detected in bilateral ${currentStudyData.study_type.toLowerCase()}s.\n`
       }
     } else {
       const side = laterality?.toLowerCase()

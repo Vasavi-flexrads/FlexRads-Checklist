@@ -27,24 +27,10 @@ const XrayStudySelection = () => {
       name: 'Foot',
       icon: '🦶',
     },
-  ]
-
-  const spineStudies = [
     {
-      id: 'cervical-spine',
-      name: 'Cervical Spine',
-    },
-    {
-      id: 'dorsal-spine',
-      name: 'Dorsal Spine',
-    },
-    {
-      id: 'lumbar-spine',
-      name: 'Lumbar Spine',
-    },
-    {
-      id: 'whole-spine',
-      name: 'Whole Spine',
+      id: 'spine',
+      name: 'Spine',
+      icon: '🦴',
     },
   ]
 
@@ -81,59 +67,26 @@ const XrayStudySelection = () => {
 
       {/* Main Content */}
       <main className={`max-w-screen-lg mx-auto px-4 sm:px-6 lg:px-8 py-12`}>
-        {/* General Studies */}
-        <section className={`mb-12`}>
-          <h2 className={`text-2xl font-bold ${theme.colors.text.primary} mb-6`}>
-            General Studies
-          </h2>
-          <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6`}>
-            {studies.map((study) => (
-              <div
-                key={study.id}
-                className={`medical-card cursor-pointer hover:scale-105 fade-in`}
-                onClick={() => handleStudySelect(study.id)}
-              >
-                <div className={`text-center`}>
-                  <div className={`text-4xl mb-3`}>{study.icon}</div>
-                  <h3 className={`text-lg font-semibold ${theme.colors.text.primary} mb-4`}>
-                    {study.name}
-                  </h3>
-                  <div className={`flex items-center justify-center text-blue-600`}>
-                    <span className={`text-sm font-medium`}>Start Report</span>
-                    <ChevronRight className={`h-4 w-4 ml-1`} />
-                  </div>
+        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6`}>
+          {studies.map((study) => (
+            <div
+              key={study.id}
+              className={`medical-card cursor-pointer hover:scale-105 fade-in`}
+              onClick={() => handleStudySelect(study.id)}
+            >
+              <div className={`text-center`}>
+                <div className={`text-4xl mb-3`}>{study.icon}</div>
+                <h3 className={`text-lg font-semibold ${theme.colors.text.primary} mb-4`}>
+                  {study.name}
+                </h3>
+                <div className={`flex items-center justify-center text-blue-600`}>
+                  <span className={`text-sm font-medium`}>Start Report</span>
+                  <ChevronRight className={`h-4 w-4 ml-1`} />
                 </div>
               </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Spine Studies */}
-        <section>
-          <h2 className={`text-2xl font-bold ${theme.colors.text.primary} mb-6`}>
-            Spine Studies
-          </h2>
-          <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6`}>
-            {spineStudies.map((study) => (
-              <div
-                key={study.id}
-                className={`medical-card cursor-pointer hover:scale-105 fade-in`}
-                onClick={() => handleStudySelect(study.id)}
-              >
-                <div className={`text-center`}>
-                  <div className={`text-4xl mb-3`}>🦴</div>
-                  <h3 className={`text-lg font-semibold ${theme.colors.text.primary} mb-4`}>
-                    {study.name}
-                  </h3>
-                  <div className={`flex items-center justify-center text-blue-600`}>
-                    <span className={`text-sm font-medium`}>Start Report</span>
-                    <ChevronRight className={`h-4 w-4 ml-1`} />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+            </div>
+          ))}
+        </div>
       </main>
     </div>
   )
