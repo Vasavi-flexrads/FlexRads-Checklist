@@ -29,21 +29,21 @@ const ChecklistPage = () => {
 
   const generateReport = useCallback(() => {
     const laterality = selectedFindings.laterality
+    const spineRegion = selectedFindings.spineRegion
     const formData = selectedFindings.formData || {}
     
     let report = ''
     
     if (currentStudyData) {
-      if (laterality === 'Bilateral') {
+      if (currentStudyData.has_spine_region) {
+        report += `X-RAY ${spineRegion?.toUpperCase()} ${currentStudyData.study_type.toUpperCase()}\n\n`
+      } else if (laterality === 'Bilateral') {
         report += `X-RAY BILATERAL ${currentStudyData.study_type.toUpperCase()}\n\n`
       } else {
         report += `X-RAY ${laterality?.toUpperCase()} ${currentStudyData.study_type.toUpperCase()}\n\n`
       }
     }
 
-
-    
-    
     if (clinicalHistory.trim()) {
       report += `CLINICAL HISTORY:\n${clinicalHistory.trim()}\n\n`
     }
@@ -61,8 +61,86 @@ const ChecklistPage = () => {
         const value = sideData[item.id]
         if (!value) return
         
-        // Hardware findings (updated for foot)
-        if (item.id === 'hardware') {
+        // Spine-specific findings
+        if (currentStudyData.study_type === 'Spine') {
+          if (item.id === 'hardware' && value === 'Yes') {
+            const hardwareDetails = sideData.hardware_details
+            if (hardwareDetails) {
+              findings.push(`Hardware present: ${hardwareDetails}`)
+            }
+          }
+          
+          if (item.id === 'lordosis' && value === 'Yes') {
+            const lordosisType = sideData.lordosis_type
+            if (lordosisType) {
+              findings.push(`${lordosisType} present`)
+            }
+          }
+          
+          if (item.id === 'scoliosis' && value === 'Yes') {
+            const scoliosisType = sideData.scoliosis_type
+            const scoliosisCenter = sideData.scoliosis_center
+            let scoliosisText = `${scoliosisType} scoliosis`
+            if (scoliosisCenter) {
+              scoliosisText += ` centered at ${scoliosisCenter}`
+            }
+            findings.push(scoliosisText)
+          }
+          
+          if (item.id === 'multilevel_degenerative_changes' && value === 'Yes') {
+            const severity = sideData.degenerative_severity
+            const pronouncedAt = sideData.degenerative_pronounced_at
+            const facetSeverity = sideData.facet_arthritis_severity
+            const facetLocation = sideData.facet_arthritis_location
+            
+            let degenerativeText = 'Multilevel degenerative changes'
+            if (severity) {
+              degenerativeText = `${severity} multilevel degenerative changes`
+            }
+            if (pronouncedAt) {
+              degenerativeText += `, more pronounced at ${pronouncedAt}`
+            }
+            findings.push(degenerativeText)
+            
+            if (facetSeverity && facetLocation) {
+              findings.push(`${facetSeverity} facet arthritis at ${facetLocation}`)
+            } else if (facetSeverity) {
+              findings.push(`${facetSeverity} facet arthritis`)
+            }
+          }
+          
+          if (item.id === 'fracture' && value === 'Yes') {
+            const fractureType = sideData.fracture_type
+            const vertebralBody = sideData.fracture_vertebral_body
+            let fractureText = 'Fracture'
+            if (fractureType) fractureText = fractureType
+            if (vertebralBody) fractureText += ` at ${vertebralBody}`
+            findings.push(fractureText)
+          }
+          
+          if (item.id === 'anterolisthesis' && value === 'Present') {
+            const anterolisthesisDetails = sideData.anterolisthesis_details
+            if (anterolisthesisDetails) {
+              findings.push(`Anterolisthesis: ${anterolisthesisDetails}`)
+            } else {
+              findings.push('Anterolisthesis present')
+            }
+          }
+          
+          if (item.id === 'motion_flexion_extension' && value === 'Present') {
+            const measurement = sideData.motion_measurement
+            const vertebralBody = sideData.motion_vertebral_body
+            let motionText = 'No motion on flexion extension view'
+            if (measurement && vertebralBody) {
+              motionText += `: ${measurement} at ${vertebralBody}`
+            } else if (vertebralBody) {
+              motionText += ` at ${vertebralBody}`
+            }
+            findings.push(motionText)
+          }
+        }
+        // Hardware findings (for non-spine studies)
+        else if (item.id === 'hardware') {
           if (currentStudyData.study_type === 'Foot' && value === 'Yes') {
             const hardwareTypes = sideData.hardware_types
             if (hardwareTypes && hardwareTypes.length > 0) {
@@ -97,7 +175,7 @@ const ChecklistPage = () => {
                 findings.push(`Hardware present: ${hardwareDetails.join(', ')}`)
               }
             }
-          } else if (value === 'Present') {
+          } else if (value === 'Present' || value === 'Yes') {
             // Handle other study types (hip, shoulder, knee)
             const hardwareType = sideData.hardware_type
             if (hardwareType) {
@@ -387,7 +465,19 @@ const ChecklistPage = () => {
       return findings
     }
     
-    if (laterality === 'Bilateral') {
+    if (currentStudyData.has_spine_region) {
+      // Handle spine region-based reporting
+      const region = spineRegion?.toLowerCase()
+      const findings = generateSideFindings(region, spineRegion)
+      
+      if (findings.length > 0) {
+        findings.forEach((finding, index) => {
+          report += `${index + 1}. ${finding}\n`
+        })
+      } else {
+        report += 'No significant abnormalities detected.\n'
+      }
+    } else if (laterality === 'Bilateral') {
       const rightFindings = generateSideFindings('right', 'Right')
       const leftFindings = generateSideFindings('left', 'Left')
       

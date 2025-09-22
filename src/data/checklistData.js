@@ -906,12 +906,178 @@ export const kneeChecklistData = {
   ]
 }
 
+export const spineChecklistData = {
+  study_type: 'Spine',
+  has_laterality: false,
+  has_spine_region: true,
+  spine_regions: ['Cervical', 'Dorsal', 'Lumbar'],
+  checklist_items: [
+    {
+      id: 'hardware',
+      label: 'Hardware',
+      type: 'radio',
+      options: ['Yes', 'No'],
+      conditional: {
+        condition: 'Yes',
+        sub_items: [
+          {
+            id: 'hardware_details',
+            label: 'Hardware Type and Region',
+            type: 'text',
+            placeholder: 'e.g., Posterior cervical fusion C3-C6'
+          }
+        ]
+      }
+    },
+    {
+      id: 'lordosis',
+      label: 'Lordosis',
+      type: 'radio',
+      options: ['Yes', 'No'],
+      conditional: {
+        condition: 'Yes',
+        sub_items: [
+          {
+            id: 'lordosis_type',
+            label: 'Lordosis Type',
+            type: 'radio',
+            options: ['Hyperlordosis', 'Hypolordosis', 'Straightening', 'Kyphosis']
+          }
+        ]
+      }
+    },
+    {
+      id: 'scoliosis',
+      label: 'Scoliosis',
+      type: 'radio',
+      options: ['Yes', 'No'],
+      conditional: {
+        condition: 'Yes',
+        sub_items: [
+          {
+            id: 'scoliosis_type',
+            label: 'Scoliosis Type',
+            type: 'radio',
+            options: ['Dextro', 'Levo']
+          },
+          {
+            id: 'scoliosis_center',
+            label: 'Centered at vertebral body',
+            type: 'text',
+            placeholder: 'e.g., T7-T8',
+            show_when: 'scoliosis_type_not_empty'
+          }
+        ]
+      }
+    },
+    {
+      id: 'multilevel_degenerative_changes',
+      label: 'Multilevel degenerative changes',
+      type: 'radio',
+      options: ['Yes', 'No'],
+      conditional: {
+        condition: 'Yes',
+        sub_items: [
+          {
+            id: 'degenerative_severity',
+            label: 'Severity',
+            type: 'radio',
+            options: ['Mild', 'Moderate', 'Severe']
+          },
+          {
+            id: 'degenerative_pronounced_at',
+            label: 'More pronounced at vertebral body',
+            type: 'text',
+            placeholder: 'e.g., L4-L5'
+          },
+          {
+            id: 'facet_arthritis_severity',
+            label: 'Facet arthritis severity',
+            type: 'radio',
+            options: ['Mild', 'Moderate', 'Severe']
+          },
+          {
+            id: 'facet_arthritis_location',
+            label: 'Facet arthritis vertebral body',
+            type: 'text',
+            placeholder: 'e.g., L3-L4, L4-L5'
+          }
+        ]
+      }
+    },
+    {
+      id: 'fracture',
+      label: 'Fracture',
+      type: 'radio',
+      options: ['Yes', 'No'],
+      conditional: {
+        condition: 'Yes',
+        sub_items: [
+          {
+            id: 'fracture_type',
+            label: 'Fracture type',
+            type: 'text',
+            placeholder: 'e.g., Compression fracture'
+          },
+          {
+            id: 'fracture_vertebral_body',
+            label: 'Vertebral body',
+            type: 'text',
+            placeholder: 'e.g., L1'
+          }
+        ]
+      }
+    },
+    {
+      id: 'anterolisthesis',
+      label: 'Anterolisthesis',
+      type: 'radio',
+      options: ['Present', 'Absent'],
+      conditional: {
+        condition: 'Present',
+        sub_items: [
+          {
+            id: 'anterolisthesis_details',
+            label: 'Anterolisthesis details',
+            type: 'text',
+            placeholder: 'e.g., L4 on L5'
+          }
+        ]
+      }
+    },
+    {
+      id: 'motion_flexion_extension',
+      label: 'No motion on flexion extension view',
+      type: 'radio',
+      options: ['Present', 'Absent'],
+      conditional: {
+        condition: 'Present',
+        sub_items: [
+          {
+            id: 'motion_measurement',
+            label: 'Measurement',
+            type: 'text',
+            placeholder: 'e.g., 2mm'
+          },
+          {
+            id: 'motion_vertebral_body',
+            label: 'Vertebral body',
+            type: 'text',
+            placeholder: 'e.g., C5-C6'
+          }
+        ]
+      }
+    }
+  ]
+}
+
 // Placeholder data for other studies (to be defined later)
 export const studyData = {
   knee: kneeChecklistData,
   shoulder: shoulderChecklistData,
   hip: hipChecklistData,
   foot: footChecklistData,
+  spine: spineChecklistData,
   'cervical-spine': {
     study_type: 'Cervical Spine',
     checklist_items: [],

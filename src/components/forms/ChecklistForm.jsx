@@ -5,6 +5,7 @@ import { Check, ChevronDown, ChevronUp } from 'lucide-react'
 const ChecklistForm = ({ studyData, onSelectionChange, selectedFindings }) => {
   const { theme } = useTheme()
   const [laterality, setLaterality] = useState('Right')
+  const [spineRegion, setSpineRegion] = useState('Cervical')
   const [formData, setFormData] = useState({})
   const [expandedSections, setExpandedSections] = useState({})
 
@@ -20,7 +21,7 @@ const ChecklistForm = ({ studyData, onSelectionChange, selectedFindings }) => {
   }
 
   useEffect(() => {
-    // Initialize form data based on laterality
+    // Initialize form data based on study type
     if (studyData?.has_laterality) {
       const initialData = {}
       if (laterality === 'Bilateral') {
@@ -30,14 +31,23 @@ const ChecklistForm = ({ studyData, onSelectionChange, selectedFindings }) => {
         initialData[laterality.toLowerCase()] = {}
       }
       setFormData(initialData)
+    } else if (studyData?.has_spine_region) {
+      // Initialize spine data
+      const initialData = {}
+      initialData[spineRegion.toLowerCase()] = {}
+      setFormData(initialData)
     }
-  }, [laterality, studyData])
+  }, [laterality, spineRegion, studyData])
 
   // Separate useEffect to handle parent component updates
   useEffect(() => {
-    onSelectionChange('laterality', laterality)
+    if (studyData?.has_laterality) {
+      onSelectionChange('laterality', laterality)
+    } else if (studyData?.has_spine_region) {
+      onSelectionChange('spineRegion', spineRegion)
+    }
     onSelectionChange('formData', formData)
-  }, [laterality, formData, onSelectionChange])
+  }, [laterality, spineRegion, formData, onSelectionChange])
 
   const handleLateralityChange = (value) => {
     setLaterality(value)
@@ -50,7 +60,14 @@ const ChecklistForm = ({ studyData, onSelectionChange, selectedFindings }) => {
       newData[value.toLowerCase()] = {}
     }
     setFormData(newData)
-    // onSelectionChange calls are now handled in useEffect
+  }
+
+  const handleSpineRegionChange = (value) => {
+    setSpineRegion(value)
+    // Reset form data when spine region changes
+    const newData = {}
+    newData[value.toLowerCase()] = {}
+    setFormData(newData)
   }
 
   const handleInputChange = (side, itemId, value, subItemId = null) => {
@@ -93,6 +110,12 @@ const ChecklistForm = ({ studyData, onSelectionChange, selectedFindings }) => {
     if (condition.includes('_equals_')) {
       const [fieldName, value] = condition.split('_equals_')
       return sideData[fieldName] === value
+    }
+    
+    if (condition.includes('_not_empty')) {
+      const fieldName = condition.replace('_not_empty', '')
+      const fieldValue = sideData[fieldName]
+      return fieldValue && fieldValue.trim() !== ''
     }
     
     return true
@@ -816,15 +839,56 @@ const ChecklistForm = ({ studyData, onSelectionChange, selectedFindings }) => {
         </div>
       )}
 
+      {/* Spine Region Selection */}
+      {studyData.has_spine_region && (
+        <div className='medical-card'>
+          <label className={`block text-lg font-semibold ${theme.colors.text.primary} mb-4`}>
+            Spine Region:
+          </label>
+          <div className='flex space-x-4'>
+            {studyData.spine_regions.map((option) => {
+              const isSelected = spineRegion === option
+              return (
+                <button
+                  key={option}
+                  type='button'
+                  onClick={() => handleSpineRegionChange(option)}
+                  className={`flex items-center space-x-2 px-6 py-3 rounded-lg border transition-all duration-200 ${
+                    isSelected
+                      ? `${theme.colors.button.primary} border-transparent shadow-lg`
+                      : `${theme.colors.surface} ${theme.colors.border} hover:border-orange-500/50`
+                  }`}
+                >
+                  <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                    isSelected
+                      ? 'border-white bg-white/20'
+                      : 'border-gray-500'
+                  }`}>
+                    {isSelected && <div className='w-2 h-2 rounded-full bg-white' />}
+                  </div>
+                  <span className={`font-medium ${
+                    isSelected ? 'text-white' : theme.colors.text.primary
+                  }`}>
+                    {option}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Checklist Items */}
-      {laterality === 'Bilateral' ? (
+      {studyData.has_laterality && laterality === 'Bilateral' ? (
         <div className='space-y-12'>
           {renderSideChecklist('right', 'Right')}
           {renderSideChecklist('left', 'Left')}
         </div>
-      ) : (
+      ) : studyData.has_laterality ? (
         renderSideChecklist(laterality.toLowerCase(), laterality)
-      )}
+      ) : studyData.has_spine_region ? (
+        renderSideChecklist(spineRegion.toLowerCase(), spineRegion)
+      ) : null}
     </div>
   )
 }
