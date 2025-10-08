@@ -10,7 +10,7 @@ const ChecklistForm = ({ studyData, onSelectionChange, selectedFindings }) => {
   const [expandedSections, setExpandedSections] = useState({})
 
   // Early return if no study data or checklist items available
-  if (!studyData || !studyData.checklist_items || studyData.checklist_items.length === 0) {
+  if (!studyData || !studyData?.checklist_items || studyData.checklist_items.length === 0) {
     return (
       <div className='medical-card'>
         <p className={`${theme.colors.text.secondary} text-center`}>
@@ -22,7 +22,10 @@ const ChecklistForm = ({ studyData, onSelectionChange, selectedFindings }) => {
 
   useEffect(() => {
     // Initialize form data based on study type
-    if (studyData?.has_laterality) {
+    const hasLaterality = studyData?.imaging_findings?.some(item => item.label === 'Laterality')
+    const hasSpineRegion = studyData?.imaging_findings?.some(item => item.label === 'Spine Region')
+    
+    if (hasLaterality) {
       const initialData = {}
       if (laterality === 'Bilateral') {
         initialData.right = {}
@@ -31,7 +34,7 @@ const ChecklistForm = ({ studyData, onSelectionChange, selectedFindings }) => {
         initialData[laterality.toLowerCase()] = {}
       }
       setFormData(initialData)
-    } else if (studyData?.has_spine_region) {
+    } else if (hasSpineRegion) {
       // Initialize spine data
       const initialData = {}
       initialData[spineRegion.toLowerCase()] = {}
@@ -41,9 +44,12 @@ const ChecklistForm = ({ studyData, onSelectionChange, selectedFindings }) => {
 
   // Separate useEffect to handle parent component updates
   useEffect(() => {
-    if (studyData?.has_laterality) {
+    const hasLaterality = studyData?.imaging_findings?.some(item => item.label === 'Laterality')
+    const hasSpineRegion = studyData?.imaging_findings?.some(item => item.label === 'Spine Region')
+    
+    if (hasLaterality) {
       onSelectionChange('laterality', laterality)
-    } else if (studyData?.has_spine_region) {
+    } else if (hasSpineRegion) {
       onSelectionChange('spineRegion', spineRegion)
     }
     onSelectionChange('formData', formData)
@@ -569,173 +575,199 @@ const ChecklistForm = ({ studyData, onSelectionChange, selectedFindings }) => {
     )
   }
 
+  // Dynamic degenerative changes conditional rendering
+  const renderDegenerativeChangesConditional = (item, side) => {
+    const subItems = item.conditional.sub_items
+    const jointsItem = subItems.find(sub => sub.id === 'joints')
+    const compartmentsItem = subItems.find(sub => sub.id === 'compartments')
+    
+    // Handle joints (for foot and shoulder)
+    if (jointsItem) {
+      const selectedJoints = formData[side]?.joints || []
+      return (
+        <div className='ml-6 mt-4 space-y-4 border-l-2 border-orange-500/30 pl-4'>
+          <div>
+            <label className={`block text-sm font-medium ${theme.colors.text.primary} mb-2`}>
+              {jointsItem.label}
+            </label>
+            {renderInput(jointsItem, side)}
+          </div>
+          
+          {selectedJoints.length > 0 && (
+            <div className='mt-4'>
+              <h4 className={`text-sm font-medium ${theme.colors.text.primary} mb-3`}>
+                Joint-specific assessments:
+              </h4>
+              {renderShoulderDegenerativeChangesSection(side, selectedJoints)}
+            </div>
+          )}
+          
+          {/* Always show mandatory questions when degenerative changes = Yes (for foot) */}
+          {renderFootMandatoryDegenerativeQuestions(side)}
+          
+          {/* Render other sub-items that are not joints */}
+          {subItems.map((subItem) => {
+            if (!checkShowWhen(subItem, side)) return null
+            
+            const subValue = formData[side]?.[subItem.id]
+            return (
+              <div key={subItem.id}>
+                <label className={`block text-sm font-medium ${theme.colors.text.primary} mb-2`}>
+                  {subItem.label}
+                </label>
+                {renderInput({ ...subItem, id: subItem.id }, side)}
+                {renderConditionalItems(subItem, side, subValue)}
+              </div>
+            )
+          })}
+        </div>
+      )
+    }
+    
+    // Handle compartments (for knee)
+    if (compartmentsItem) {
+      const selectedCompartments = formData[side]?.compartments || []
+      return (
+        <div className='ml-6 mt-4 space-y-4 border-l-2 border-orange-500/30 pl-4'>
+          <div>
+            <label className={`block text-sm font-medium ${theme.colors.text.primary} mb-2`}>
+              {compartmentsItem.label}
+            </label>
+            {renderInput(compartmentsItem, side)}
+          </div>
+          
+          {selectedCompartments.length > 0 && (
+            <div className='mt-4'>
+              <h4 className={`text-sm font-medium ${theme.colors.text.primary} mb-3`}>
+                Compartment-specific assessments:
+              </h4>
+              {renderDegenerativeChangesSection(side, selectedCompartments)}
+            </div>
+          )}
+          
+          {/* Render other sub-items that are not compartments */}
+          {subItems.map((subItem) => {
+            if (subItem.id === 'compartments' || !checkShowWhen(subItem, side)) return null
+            
+            const subValue = formData[side]?.[subItem.id]
+            return (
+              <div key={subItem.id}>
+                <label className={`block text-sm font-medium ${theme.colors.text.primary} mb-2`}>
+                  {subItem.label}
+                </label>
+                {renderInput({ ...subItem, id: subItem.id }, side)}
+                {renderConditionalItems(subItem, side, subValue)}
+              </div>
+            )
+          })}
+        </div>
+      )
+    }
+    
+    // Default rendering for other degenerative changes sub-items (like hip)
+    return (
+      <div className='ml-6 mt-4 space-y-4 border-l-2 border-orange-500/30 pl-4'>
+        {subItems.map((subItem) => {
+          if (!checkShowWhen(subItem, side)) return null
+          
+          const subValue = formData[side]?.[subItem.id]
+          return (
+            <div key={subItem.id}>
+              <label className={`block text-sm font-medium ${theme.colors.text.primary} mb-2`}>
+                {subItem.label}
+              </label>
+              {renderInput({ ...subItem, id: subItem.id }, side)}
+              {renderConditionalItems(subItem, side, subValue)}
+            </div>
+          )
+        })}
+      </div>
+    )
+  }
+
+  // Dynamic fracture followup conditional rendering
+  const renderFractureFollowupConditional = (item, side) => {
+    const followupTypeItem = item.conditional.sub_items.find(sub => sub.id === 'followup_type')
+    if (followupTypeItem) {
+      const selectedFollowupType = formData[side]?.followup_type
+      
+      return (
+        <div className='ml-6 mt-4 space-y-4 border-l-2 border-orange-500/30 pl-4'>
+          <div>
+            <label className={`block text-sm font-medium ${theme.colors.text.primary} mb-2`}>
+              {followupTypeItem.label}
+            </label>
+            {renderInput(followupTypeItem, side)}
+          </div>
+          
+          {selectedFollowupType && (
+            <div className='mt-4'>
+              <h4 className={`text-sm font-medium ${theme.colors.text.primary} mb-3`}>
+                Followup details:
+              </h4>
+              {renderFractureFollowupSection(side, selectedFollowupType)}
+            </div>
+          )}
+        </div>
+      )
+    }
+    return null
+  }
+
+  // Dynamic AC joint separation conditional rendering
+  const renderAcSeparationConditional = (item, side) => {
+    const gradeItem = item.conditional.sub_items.find(sub => sub.id === 'ac_separation_grade')
+    if (gradeItem) {
+      const selectedGrade = formData[side]?.ac_separation_grade
+      
+      return (
+        <div className='ml-6 mt-4 space-y-4 border-l-2 border-orange-500/30 pl-4'>
+          <div>
+            <label className={`block text-sm font-medium ${theme.colors.text.primary} mb-2`}>
+              {gradeItem.label}
+            </label>
+            {renderInput(gradeItem, side)}
+          </div>
+          
+          {selectedGrade && (
+            <div className='mt-4'>
+              <h4 className={`text-sm font-medium ${theme.colors.text.primary} mb-3`}>
+                Grade details:
+              </h4>
+              {renderAcSeparationSection(side, selectedGrade)}
+            </div>
+          )}
+        </div>
+      )
+    }
+    return null
+  }
+
   const renderConditionalItems = (item, side, currentValue) => {
     if (!item.conditional || !currentValue) return null
     
     if (item.conditional.condition && currentValue === item.conditional.condition) {
-      // Special handling for degenerative changes
+      // Dynamic degenerative changes handling
       if (item.id === 'degenerative_changes') {
-        if (studyData.study_type === 'Knee') {
-          // Knee-specific compartment handling
-          const compartmentsItem = item.conditional.sub_items.find(subItem => subItem.id === 'compartments')
-          if (compartmentsItem) {
-            const selectedCompartments = formData[side]?.compartments || []
-            
-            return (
-              <div className='ml-6 mt-4 space-y-4 border-l-2 border-orange-500/30 pl-4'>
-                <div>
-                  <label className={`block text-sm font-medium ${theme.colors.text.primary} mb-2`}>
-                    {compartmentsItem.label}
-                  </label>
-                  {renderInput(compartmentsItem, side)}
-                </div>
-                
-                {selectedCompartments.length > 0 && (
-                  <div className='mt-4'>
-                    <h4 className={`text-sm font-medium ${theme.colors.text.primary} mb-3`}>
-                      Compartment-specific assessments:
-                    </h4>
-                    {renderDegenerativeChangesSection(side, selectedCompartments)}
-                  </div>
-                )}
-              </div>
-            )
-          }
-        } else if (studyData.study_type === 'Shoulder') {
-          // Shoulder-specific joint handling
-          const jointsItem = item.conditional.sub_items.find(subItem => subItem.id === 'joints')
-          if (jointsItem) {
-            const selectedJoints = formData[side]?.joints || []
-            
-            return (
-              <div className='ml-6 mt-4 space-y-4 border-l-2 border-orange-500/30 pl-4'>
-                <div>
-                  <label className={`block text-sm font-medium ${theme.colors.text.primary} mb-2`}>
-                    {jointsItem.label}
-                  </label>
-                  {renderInput(jointsItem, side)}
-                </div>
-                
-                {selectedJoints.length > 0 && (
-                  <div className='mt-4'>
-                    <h4 className={`text-sm font-medium ${theme.colors.text.primary} mb-3`}>
-                      Joint-specific assessments:
-                    </h4>
-                    {renderShoulderDegenerativeChangesSection(side, selectedJoints)}
-                  </div>
-                )}
-              </div>
-            )
-          }
-        } else if (studyData.study_type === 'Foot') {
-          // Foot-specific joint handling
-          const jointsItem = item.conditional.sub_items.find(subItem => subItem.id === 'joints')
-          if (jointsItem) {
-            const selectedJoints = formData[side]?.joints || []
-            
-            return (
-              <div className='ml-6 mt-4 space-y-4 border-l-2 border-orange-500/30 pl-4'>
-                <div>
-                  <label className={`block text-sm font-medium ${theme.colors.text.primary} mb-2`}>
-                    {jointsItem.label}
-                  </label>
-                  {renderInput(jointsItem, side)}
-                </div>
-                
-                {selectedJoints.length > 0 && (
-                  <div className='mt-4'>
-                    <h4 className={`text-sm font-medium ${theme.colors.text.primary} mb-3`}>
-                      Individual joint severity:
-                    </h4>
-                    {renderFootDegenerativeChangesSection(side, selectedJoints)}
-                  </div>
-                )}
-                
-                {/* Always show mandatory questions when degenerative changes = Yes */}
-                {renderFootMandatoryDegenerativeQuestions(side)}
-              </div>
-            )
-          }
-        }
+        return renderDegenerativeChangesConditional(item, side)
       }
       
-      // Special handling for fracture followup
+      // Dynamic fracture followup handling
       if (item.id === 'fracture_followup') {
-        const followupTypeItem = item.conditional.sub_items.find(subItem => subItem.id === 'followup_type')
-        if (followupTypeItem) {
-          const selectedFollowupType = formData[side]?.followup_type
-          
-          return (
-            <div className='ml-6 mt-4 space-y-4 border-l-2 border-orange-500/30 pl-4'>
-              <div>
-                <label className={`block text-sm font-medium ${theme.colors.text.primary} mb-2`}>
-                  {followupTypeItem.label}
-                </label>
-                {renderInput(followupTypeItem, side)}
-              </div>
-              
-              {selectedFollowupType && (
-                <div className='mt-4'>
-                  <h4 className={`text-sm font-medium ${theme.colors.text.primary} mb-3`}>
-                    Followup details:
-                  </h4>
-                  {renderFractureFollowupSection(side, selectedFollowupType)}
-                </div>
-              )}
-            </div>
-          )
-        }
+        return renderFractureFollowupConditional(item, side)
       }
       
-      // Special handling for AC joint separation
+      // Dynamic AC joint separation handling
       if (item.id === 'ac_joint_separation') {
-        const gradeItem = item.conditional.sub_items.find(subItem => subItem.id === 'ac_separation_grade')
-        if (gradeItem) {
-          const selectedGrade = formData[side]?.ac_separation_grade
-          
-          return (
-            <div className='ml-6 mt-4 space-y-4 border-l-2 border-orange-500/30 pl-4'>
-              <div>
-                <label className={`block text-sm font-medium ${theme.colors.text.primary} mb-2`}>
-                  {gradeItem.label}
-                </label>
-                {renderInput(gradeItem, side)}
-              </div>
-              
-              {selectedGrade && (
-                <div className='mt-4'>
-                  <h4 className={`text-sm font-medium ${theme.colors.text.primary} mb-3`}>
-                    Grade details:
-                  </h4>
-                  {renderAcSeparationSection(side, selectedGrade)}
-                </div>
-              )}
-            </div>
-          )
-        }
+        return renderAcSeparationConditional(item, side)
       }
       
-      // Default conditional rendering for other items - filter out show_when items that shouldn't be shown
+      // Default conditional rendering for other items
       return (
         <div className='ml-6 mt-4 space-y-4 border-l-2 border-orange-500/30 pl-4'>
           {item.conditional.sub_items.map((subItem) => {
             // Skip items that don't meet show_when conditions
             if (!checkShowWhen(subItem, side)) {
-              return null
-            }
-            
-            // Skip compartment-specific items for degenerative changes (handled above)
-            if (item.id === 'degenerative_changes' && (subItem.id === 'compartments' || subItem.id === 'joints' || subItem.show_when)) {
-              return null
-            }
-            
-            // Skip followup-specific items for fracture followup (handled above)
-            if (item.id === 'fracture_followup' && (subItem.id === 'followup_type' || subItem.conditional_any)) {
-              return null
-            }
-            
-            // Skip AC joint separation specific items (handled above)
-            if (item.id === 'ac_joint_separation' && (subItem.id === 'ac_separation_grade' || subItem.conditional_any)) {
               return null
             }
             
@@ -779,9 +811,9 @@ const ChecklistForm = ({ studyData, onSelectionChange, selectedFindings }) => {
   const renderSideChecklist = (side, sideLabel) => (
     <div className='space-y-6'>
       <h3 className={`text-xl font-bold ${theme.colors.text.accent} border-b border-orange-500/30 pb-2`}>
-        {sideLabel} {studyData.study_type} Checklist Items:
+        {sideLabel} {studyData.study_type.toLowerCase()} Checklist Items:
       </h3>
-      {studyData.checklist_items.map((item, index) => {
+      {studyData?.checklist_items?.map((item, index) => {
         const currentValue = formData[side]?.[item.id]
         return (
           <div key={item.id} className='medical-card'>
@@ -801,7 +833,7 @@ const ChecklistForm = ({ studyData, onSelectionChange, selectedFindings }) => {
   return (
     <div className='space-y-8'>
       {/* Laterality Selection */}
-      {studyData.has_laterality && (
+      {studyData?.imaging_findings?.some(item => item.label === 'Laterality') && (
         <div className='medical-card'>
           <label className={`block text-lg font-semibold ${theme.colors.text.primary} mb-4`}>
             Laterality:
@@ -840,13 +872,13 @@ const ChecklistForm = ({ studyData, onSelectionChange, selectedFindings }) => {
       )}
 
       {/* Spine Region Selection */}
-      {studyData.has_spine_region && (
+      {studyData?.imaging_findings?.some(item => item.label === 'Spine Region') && (
         <div className='medical-card'>
           <label className={`block text-lg font-semibold ${theme.colors.text.primary} mb-4`}>
             Spine Region:
           </label>
           <div className='flex space-x-4'>
-            {studyData.spine_regions.map((option) => {
+            {studyData?.imaging_findings?.find(item => item.label === 'Spine Region')?.options?.map((option) => {
               const isSelected = spineRegion === option
               return (
                 <button
@@ -879,14 +911,14 @@ const ChecklistForm = ({ studyData, onSelectionChange, selectedFindings }) => {
       )}
 
       {/* Checklist Items */}
-      {studyData.has_laterality && laterality === 'Bilateral' ? (
+      {studyData?.imaging_findings?.some(item => item.label === 'Laterality') && laterality === 'Bilateral' ? (
         <div className='space-y-12'>
           {renderSideChecklist('right', 'Right')}
           {renderSideChecklist('left', 'Left')}
         </div>
-      ) : studyData.has_laterality ? (
+      ) : studyData?.imaging_findings?.some(item => item.label === 'Laterality') ? (
         renderSideChecklist(laterality.toLowerCase(), laterality)
-      ) : studyData.has_spine_region ? (
+      ) : studyData?.imaging_findings?.some(item => item.label === 'Spine Region') ? (
         renderSideChecklist(spineRegion.toLowerCase(), spineRegion)
       ) : null}
     </div>

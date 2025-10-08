@@ -1,0 +1,1544 @@
+[
+    {
+        "study_type": "FOOT",
+        "imaging_findings": [
+            {
+                "label": "Laterality",
+                "type": "radio",
+                "options": [
+                    "Right",
+                    "Left",
+                    "Bilateral"
+                ]
+            }
+        ],
+        "checklist_items": [
+            {
+                "id": "hardware",
+                "label": "Hardware",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "hardware_types",
+                            "label": "Hardware Types (multi-select)",
+                            "type": "checkbox",
+                            "options": [
+                                "Arthrodesis and screw fixation",
+                                "Plate and screw fixation",
+                                "K wire",
+                                "Screws",
+                                "Staples"
+                            ]
+                        },
+                        {
+                            "id": "arthrodesis_region",
+                            "label": "Arthrodesis and screw fixation - Region",
+                            "type": "text",
+                            "placeholder": "e.g.,1st MTP joint",
+                            "show_when": "arthrodesis_region"
+                        },
+                        {
+                            "id": "plate_screw_region",
+                            "label": "Plate and screw fixation - Region",
+                            "type": "text",
+                            "placeholder": "e.g., Midfoot",
+                            "show_when": "plate_screw_region"
+                        },
+                        {
+                            "id": "kwire_region",
+                            "label": "K wire - Region",
+                            "type": "text",
+                            "placeholder": "e.g.,5th metatarsal",
+                            "show_when": "kwire_region"
+                        },
+                        {
+                            "id": "screws_region",
+                            "label": "Screws - Region",
+                            "type": "text",
+                            "placeholder": "e.g., Calcaneus",
+                            "show_when": "screws_region"
+                        },
+                        {
+                            "id": "staples_region",
+                            "label": "Staples - Region",
+                            "type": "text",
+                            "placeholder": "e.g., Forefoot",
+                            "show_when": "staples_region"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "post_surgical_changes",
+                "label": "Post surgical soft tissue changes",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ]
+            },
+            {
+                "id": "degenerative_changes",
+                "label": "Degenerative changes",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "joints",
+                            "label": "Affected Joints (multi-select)",
+                            "type": "checkbox",
+                            "options": [
+                                "PIP",
+                                "DIP",
+                                "IP",
+                                "MTP",
+                                "TMT",
+                                "Naviculocuniform joint",
+                                "Cubonavicular joint",
+                                "Talonavicular joint",
+                                "Calcaneo cuboid joint",
+                                "Subtalar joint"
+                            ]
+                        },
+                        {
+                            "id": "joint_space_narrowing",
+                            "label": "Joint space narrowing",
+                            "type": "radio",
+                            "options": [
+                                "Present",
+                                "Absent"
+                            ]
+                        },
+                        {
+                            "id": "osteophytes",
+                            "label": "Osteophytes",
+                            "type": "radio",
+                            "options": [
+                                "Present",
+                                "Absent"
+                            ]
+                        },
+                        {
+                            "id": "sclerotic_changes",
+                            "label": "Sclerotic changes",
+                            "type": "radio",
+                            "options": [
+                                "Present",
+                                "Absent"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "deformity",
+                "label": "Deformity",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "deformity_type",
+                            "label": "Deformity Type",
+                            "type": "radio",
+                            "options": [
+                                "Hallux valgus deformity",
+                                "Pes planus deformity",
+                                "Flexion deformity",
+                                "Charcot foot"
+                            ],
+                            "conditional": {
+                                "condition": "Hallux valgus deformity",
+                                "sub_items": [
+                                    {
+                                        "id": "hallux_valgus_mtp_changes",
+                                        "label": "1st MTP degenerative changes (for Hallux valgus)",
+                                        "type": "radio",
+                                        "options": [
+                                            "Mild",
+                                            "Moderate",
+                                            "Severe"
+                                        ]
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "id": "flexion_deformity_region",
+                            "label": "Flexion deformity - Region",
+                            "type": "text",
+                            "placeholder": "e.g., 2nd toe",
+                            "show_when": "flexion_deformity_region"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "calcaneal_spur",
+                "label": "Calcaneal spur",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "spur_location",
+                            "label": "Spur Location (multi-select)",
+                            "type": "checkbox",
+                            "options": [
+                                "Plantar",
+                                "Dorsal"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "amputation",
+                "label": "Amputation",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "amputation_region",
+                            "label": "Amputation Region",
+                            "type": "text",
+                            "placeholder": "e.g.,5th toe, Forefoot"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "acute_fracture",
+                "label": "Acute fracture",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "fracture_region",
+                            "label": "Region",
+                            "type": "text",
+                            "placeholder": "e.g.,5th metatarsal"
+                        },
+                        {
+                            "id": "fracture_type",
+                            "label": "Type",
+                            "type": "text",
+                            "placeholder": "e.g., Jones fracture, displaced"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "fracture_followup",
+                "label": "Fracture followup",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "followup_type",
+                            "label": "Followup Type",
+                            "type": "radio",
+                            "options": [
+                                "Old healed fracture",
+                                "Healing fracture"
+                            ],
+                            "conditional_any": {
+                                "sub_items": [
+                                    {
+                                        "id": "followup_region",
+                                        "label": "Region",
+                                        "type": "text",
+                                        "placeholder": "e.g., Calcaneus"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "lesion",
+                "label": "Lesion",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "lesion_region",
+                            "label": "Region",
+                            "type": "text",
+                            "placeholder": "e.g., Calcaneus"
+                        },
+                        {
+                            "id": "lesion_size",
+                            "label": "Size",
+                            "type": "text",
+                            "placeholder": "e.g.,2x3 cm"
+                        },
+                        {
+                            "id": "lesion_characteristics",
+                            "label": "Characteristics",
+                            "type": "text",
+                            "placeholder": "e.g., Sclerotic, lytic"
+                        }
+                    ]
+                }
+            }
+        ],
+        "findings_templates": {
+            "hardware": {
+                "present": "Hardware present: {details}",
+                "types": "Hardware present: {types}"
+            },
+            "post_surgical_changes": {
+                "yes": "Post surgical changes in soft tissue"
+            },
+            "calcaneal_spur": {
+                "yes_with_location": "Calcaneal spur ({locations})",
+                "yes": "Calcaneal spur present"
+            },
+            "amputation": {
+                "yes_with_region": "Amputation in {region}",
+                "yes": "Amputation present"
+            },
+            "deformity": {
+                "hallux_valgus_with_changes": "{deformity_type} with {mtp_changes} 1st MTP degenerative changes",
+                "flexion_with_region": "{deformity_type} in {region}",
+                "default": "{deformity_type}"
+            },
+            "acute_fracture": {
+                "yes_with_region_type": "Acute fracture in {region}, {type}",
+                "yes_with_region": "Acute fracture in {region}",
+                "yes": "Acute fracture"
+            },
+            "fracture_followup": {
+                "yes": "{followup_type} in {region}"
+            },
+            "lesion": {
+                "yes_with_details": "Lesion in {region}, size {size}, {characteristics}",
+                "yes_with_region_size": "Lesion in {region}, size {size}",
+                "yes_with_region": "Lesion in {region}",
+                "yes": "Lesion"
+            }
+        }
+    },
+    {
+        "study_type": "HIP",
+        "imaging_findings": [
+            {
+                "label": "Laterality",
+                "type": "radio",
+                "options": [
+                    "Right",
+                    "Left",
+                    "Bilateral"
+                ]
+            }
+        ],
+        "checklist_items": [
+            {
+                "id": "hardware",
+                "label": "Hardware",
+                "type": "radio",
+                "options": [
+                    "Present",
+                    "Absent"
+                ],
+                "conditional": {
+                    "condition": "Present",
+                    "sub_items": [
+                        {
+                            "id": "hardware_type",
+                            "label": "Hardware Type",
+                            "type": "radio",
+                            "options": [
+                                "Total hip arthroplasty (THA)",
+                                "Hemi hip arthroplasty",
+                                "Intermedullary screw and nail fixation",
+                                "IUD",
+                                "Others"
+                            ],
+                            "conditional": {
+                                "condition": "Others",
+                                "sub_items": [
+                                    {
+                                        "id": "hardware_other_description",
+                                        "label": "Specify other hardware",
+                                        "type": "text",
+                                        "placeholder": "e.g., Screws, plates"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "degenerative_changes",
+                "label": "Degenerative changes",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "severity",
+                            "label": "Severity",
+                            "type": "radio",
+                            "options": [
+                                "Mild",
+                                "Moderate",
+                                "Severe"
+                            ]
+                        },
+                        {
+                            "id": "joint_space_narrowing",
+                            "label": "Joint space narrowing",
+                            "type": "radio",
+                            "options": [
+                                "Yes",
+                                "No"
+                            ]
+                        },
+                        {
+                            "id": "osteophytes",
+                            "label": "Osteophytes",
+                            "type": "radio",
+                            "options": [
+                                "Yes",
+                                "No"
+                            ]
+                        },
+                        {
+                            "id": "sclerotic_changes",
+                            "label": "Sclerotic changes",
+                            "type": "radio",
+                            "options": [
+                                "Yes",
+                                "No"
+                            ]
+                        },
+                        {
+                            "id": "subchondral_bone_cyst",
+                            "label": "Subchondral bone cyst",
+                            "type": "radio",
+                            "options": [
+                                "Yes",
+                                "No"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "heterotrophic_calcification",
+                "label": "Heterotrophic calcification",
+                "type": "radio",
+                "options": [
+                    "Present",
+                    "Absent"
+                ]
+            },
+            {
+                "id": "vascular_calcification",
+                "label": "Vascular calcification",
+                "type": "radio",
+                "options": [
+                    "Present",
+                    "Absent"
+                ]
+            },
+            {
+                "id": "acute_fracture",
+                "label": "Acute fracture",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "fracture_region",
+                            "label": "Region",
+                            "type": "text",
+                            "placeholder": "e.g., Femoral neck"
+                        },
+                        {
+                            "id": "fracture_type",
+                            "label": "Type",
+                            "type": "text",
+                            "placeholder": "e.g., Comminuted, displaced"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "fracture_followup",
+                "label": "Fracture followup",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "followup_type",
+                            "label": "Followup Type",
+                            "type": "radio",
+                            "options": [
+                                "Old healed fracture",
+                                "Healing fracture"
+                            ],
+                            "conditional_any": {
+                                "sub_items": [
+                                    {
+                                        "id": "followup_region",
+                                        "label": "Region",
+                                        "type": "text",
+                                        "placeholder": "e.g., Greater trochanter"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "deformity",
+                "label": "Deformity",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "deformity_type",
+                            "label": "Deformity Type",
+                            "type": "radio",
+                            "options": [
+                                "Pincer deformity",
+                                "CAM deformity"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "phleboliths",
+                "label": "Phleboliths",
+                "type": "radio",
+                "options": [
+                    "Present",
+                    "Absent"
+                ]
+            },
+            {
+                "id": "lesion",
+                "label": "Lesion",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "lesion_region",
+                            "label": "Region",
+                            "type": "text",
+                            "placeholder": "e.g., Femoral head"
+                        },
+                        {
+                            "id": "lesion_size",
+                            "label": "Size",
+                            "type": "text",
+                            "placeholder": "e.g.,2x3 cm"
+                        },
+                        {
+                            "id": "lesion_characteristics",
+                            "label": "Characteristics",
+                            "type": "text",
+                            "placeholder": "e.g., Sclerotic, lytic"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "dislocation_subluxation",
+                "label": "Dislocation / Subluxation",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ]
+            }
+        ],
+        "findings_templates": {
+            "hardware": {
+                "present": "Hardware present: {type}",
+                "others": "Hardware present: {other_description}"
+            },
+            "heterotrophic_calcification": {
+                "present": "Heterotrophic calcification present"
+            },
+            "vascular_calcification": {
+                "present": "Vascular calcification present"
+            },
+            "acute_fracture": {
+                "yes_with_region_type": "Acute fracture in {region}, {type}",
+                "yes_with_region": "Acute fracture in {region}",
+                "yes": "Acute fracture"
+            },
+            "fracture_followup": {
+                "yes": "{followup_type} in {region}"
+            },
+            "deformity": {
+                "default": "{deformity_type}"
+            },
+            "phleboliths": {
+                "present": "Phleboliths present"
+            },
+            "lesion": {
+                "yes_with_details": "Lesion in {region}, size {size}, {characteristics}",
+                "yes_with_region_size": "Lesion in {region}, size {size}",
+                "yes_with_region": "Lesion in {region}",
+                "yes": "Lesion"
+            },
+            "dislocation_subluxation": {
+                "yes": "Dislocation/subluxation present"
+            }
+        }
+    },
+    {
+        "study_type": "SHOULDER",
+        "imaging_findings": [
+            {
+                "label": "Laterality",
+                "type": "radio",
+                "options": [
+                    "Right",
+                    "Left",
+                    "Bilateral"
+                ]
+            }
+        ],
+        "checklist_items": [
+            {
+                "id": "hardware",
+                "label": "Hardware",
+                "type": "radio",
+                "options": [
+                    "Present",
+                    "Absent"
+                ],
+                "conditional": {
+                    "condition": "Present",
+                    "sub_items": [
+                        {
+                            "id": "hardware_type",
+                            "label": "Hardware Type",
+                            "type": "radio",
+                            "options": [
+                                "Reversed shoulder arthroplasty",
+                                "Plate and screw fixation",
+                                "Rotator cuff repair",
+                                "Others"
+                            ],
+                            "conditional": {
+                                "condition": "Others",
+                                "sub_items": [
+                                    {
+                                        "id": "hardware_other_description",
+                                        "label": "Specify other hardware",
+                                        "type": "text",
+                                        "placeholder": "e.g., suture anchors, wires"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "post_surgical_changes",
+                "label": "Post surgical changes in soft tissue",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ]
+            },
+            {
+                "id": "degenerative_changes",
+                "label": "Degenerative changes",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "joints",
+                            "label": "Joints (multi-select)",
+                            "type": "checkbox",
+                            "options": [
+                                "Acromioclavicular (AC) joint",
+                                "Glenohumeral joint"
+                            ]
+                        },
+                        {
+                            "id": "ac_severity",
+                            "label": "AC Joint Severity",
+                            "type": "radio",
+                            "options": [
+                                "Mild",
+                                "Moderate",
+                                "Severe"
+                            ],
+                            "show_when": "ac_severity"
+                        },
+                        {
+                            "id": "ac_osteophytes",
+                            "label": "AC Joint Osteophytes",
+                            "type": "radio",
+                            "options": [
+                                "Present",
+                                "Absent"
+                            ],
+                            "show_when": "ac_severity"
+                        },
+                        {
+                            "id": "ac_joint_space_narrowing",
+                            "label": "AC Joint Space Widening (measurement)",
+                            "type": "text",
+                            "placeholder": "e.g., 2mm",
+                            "show_when": "ac_severity"
+                        },
+                        {
+                            "id": "glenohumeral_severity",
+                            "label": "Glenohumeral Joint Severity",
+                            "type": "radio",
+                            "options": [
+                                "Mild",
+                                "Moderate",
+                                "Severe"
+                            ],
+                            "show_when": "glenohumeral_severity"
+                        },
+                        {
+                            "id": "glenohumeral_osteophytes",
+                            "label": "Glenohumeral Joint Osteophytes",
+                            "type": "radio",
+                            "options": [
+                                "Present",
+                                "Absent"
+                            ],
+                            "show_when": "glenohumeral_severity"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "acute_fracture",
+                "label": "Acute fracture",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "fracture_type",
+                            "label": "Type",
+                            "type": "text",
+                            "placeholder": "e.g., Comminuted, displaced"
+                        },
+                        {
+                            "id": "fracture_region",
+                            "label": "Region",
+                            "type": "text",
+                            "placeholder": "e.g., Proximal humerus"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "fracture_followup",
+                "label": "Fracture followup",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "followup_type",
+                            "label": "Followup Type",
+                            "type": "radio",
+                            "options": [
+                                "Old healed fracture",
+                                "Healing fracture"
+                            ],
+                            "conditional_any": {
+                                "sub_items": [
+                                    {
+                                        "id": "followup_region",
+                                        "label": "Region",
+                                        "type": "text",
+                                        "placeholder": "e.g., Scapula, Clavicle"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "rotator_cuff_calcification",
+                "label": "Rotator cuff calcification",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ]
+            },
+            {
+                "id": "lesion",
+                "label": "Lesion",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "lesion_region",
+                            "label": "Region",
+                            "type": "text",
+                            "placeholder": "e.g., Humeral head"
+                        },
+                        {
+                            "id": "lesion_size",
+                            "label": "Size",
+                            "type": "text",
+                            "placeholder": "e.g.,2x3 cm"
+                        },
+                        {
+                            "id": "lesion_characteristics",
+                            "label": "Characteristics",
+                            "type": "text",
+                            "placeholder": "e.g., Sclerotic, lytic"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "dislocation_subluxation",
+                "label": "Dislocation / Subluxation",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ]
+            },
+            {
+                "id": "ac_joint_separation",
+                "label": "AC joint separation",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "ac_separation_grade",
+                            "label": "Grade",
+                            "type": "radio",
+                            "options": [
+                                "Grade 1",
+                                "Grade 2",
+                                "Grade 3"
+                            ],
+                            "conditional_any": {
+                                "sub_items": [
+                                    {
+                                        "id": "ac_separation_measurement",
+                                        "label": "Measurement",
+                                        "type": "text",
+                                        "placeholder": "e.g.,5mm displacement"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "findings_templates": {
+            "hardware": {
+                "present": "Hardware present: {type}",
+                "others": "Hardware present: {other_description}"
+            },
+            "post_surgical_changes": {
+                "yes": "Post surgical changes in soft tissue"
+            },
+            "acute_fracture": {
+                "yes_with_region_type": "Acute fracture in {region}, {type}",
+                "yes_with_region": "Acute fracture in {region}",
+                "yes": "Acute fracture"
+            },
+            "fracture_followup": {
+                "yes": "{followup_type} in {region}"
+            },
+            "rotator_cuff_calcification": {
+                "yes": "Rotator cuff calcification present"
+            },
+            "lesion": {
+                "yes_with_details": "Lesion in {region}, size {size}, {characteristics}",
+                "yes_with_region_size": "Lesion in {region}, size {size}",
+                "yes_with_region": "Lesion in {region}",
+                "yes": "Lesion"
+            },
+            "dislocation_subluxation": {
+                "yes": "Dislocation/subluxation present"
+            },
+            "ac_joint_separation": {
+                "yes_with_grade_measurement": "AC joint separation ({grade}), {measurement}",
+                "yes_with_grade": "AC joint separation ({grade})",
+                "yes": "AC joint separation"
+            }
+        }
+    },
+    {
+        "study_type": "KNEE",
+        "imaging_findings": [
+            {
+                "label": "Laterality",
+                "type": "radio",
+                "options": [
+                    "Right",
+                    "Left",
+                    "Bilateral"
+                ]
+            }
+        ],
+        "checklist_items": [
+            {
+                "id": "hardware",
+                "label": "Hardware",
+                "type": "radio",
+                "options": [
+                    "Present",
+                    "Absent"
+                ],
+                "conditional": {
+                    "condition": "Present",
+                    "sub_items": [
+                        {
+                            "id": "hardware_type",
+                            "label": "Hardware Type",
+                            "type": "radio",
+                            "options": [
+                                "Total knee replacement (TKR)",
+                                "Partial knee replacement (PKR)",
+                                "Hemi knee replacement (HKR)",
+                                "ACL reconstruction",
+                                "Others"
+                            ],
+                            "conditional": {
+                                "condition": "Others",
+                                "sub_items": [
+                                    {
+                                        "id": "hardware_other_description",
+                                        "label": "Specify other hardware",
+                                        "type": "text",
+                                        "placeholder": "e.g., Plate & screw fixation"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "post_surgical_changes",
+                "label": "Post surgical changes in soft tissue",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ]
+            },
+            {
+                "id": "degenerative_changes",
+                "label": "Degenerative changes",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "compartments",
+                            "label": "Compartments (multi-select)",
+                            "type": "checkbox",
+                            "options": [
+                                "Medial",
+                                "Lateral",
+                                "Patellofemoral"
+                            ]
+                        },
+                        {
+                            "id": "medial_severity",
+                            "label": "Medial Compartment Severity",
+                            "type": "radio",
+                            "options": [
+                                "Mild",
+                                "Moderate",
+                                "Severe"
+                            ],
+                            "show_when": "medial_severity"
+                        },
+                        {
+                            "id": "medial_osteophytes",
+                            "label": "Medial Compartment Osteophytes",
+                            "type": "radio",
+                            "options": [
+                                "Present",
+                                "Absent"
+                            ],
+                            "show_when": "medial_severity"
+                        },
+                        {
+                            "id": "lateral_severity",
+                            "label": "Lateral Compartment Severity",
+                            "type": "radio",
+                            "options": [
+                                "Mild",
+                                "Moderate",
+                                "Severe"
+                            ],
+                            "show_when": "lateral_severity"
+                        },
+                        {
+                            "id": "lateral_osteophytes",
+                            "label": "Lateral Compartment Osteophytes",
+                            "type": "radio",
+                            "options": [
+                                "Present",
+                                "Absent"
+                            ],
+                            "show_when": "lateral_severity"
+                        },
+                        {
+                            "id": "patellofemoral_severity",
+                            "label": "Patellofemoral Compartment Severity",
+                            "type": "radio",
+                            "options": [
+                                "Mild",
+                                "Moderate",
+                                "Severe"
+                            ],
+                            "show_when": "patellofemoral_severity"
+                        },
+                        {
+                            "id": "patellofemoral_osteophytes",
+                            "label": "Patellofemoral Compartment Osteophytes",
+                            "type": "radio",
+                            "options": [
+                                "Present",
+                                "Absent"
+                            ],
+                            "show_when": "patellofemoral_severity"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "deformity",
+                "label": "Deformity",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "deformity_type",
+                            "label": "Deformity Type",
+                            "type": "radio",
+                            "options": [
+                                "Varus deformity",
+                                "Valgus deformity"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "acute_fracture",
+                "label": "Acute fracture",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "fracture_region",
+                            "label": "Region",
+                            "type": "text",
+                            "placeholder": "e.g., Distal femur"
+                        },
+                        {
+                            "id": "fracture_type",
+                            "label": "Type",
+                            "type": "text",
+                            "placeholder": "e.g., Comminuted, displaced"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "fracture_followup",
+                "label": "Fracture followup",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "followup_type",
+                            "label": "Followup Type",
+                            "type": "radio",
+                            "options": [
+                                "Old healed fracture",
+                                "Healing fracture"
+                            ],
+                            "conditional_any": {
+                                "sub_items": [
+                                    {
+                                        "id": "followup_region",
+                                        "label": "Region",
+                                        "type": "text",
+                                        "placeholder": "e.g., Proximal tibia"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "joint_effusion",
+                "label": "Joint effusion",
+                "type": "radio",
+                "options": [
+                    "None",
+                    "Mild",
+                    "Moderate",
+                    "Severe"
+                ]
+            },
+            {
+                "id": "vascular_calcification",
+                "label": "Vascular calcification",
+                "type": "radio",
+                "options": [
+                    "Present",
+                    "Absent"
+                ]
+            },
+            {
+                "id": "chondrocalcinosis",
+                "label": "Chondrocalcinosis",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ]
+            },
+            {
+                "id": "lesion",
+                "label": "Lesion",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "lesion_region",
+                            "label": "Region",
+                            "type": "text",
+                            "placeholder": "e.g., Distal femur"
+                        },
+                        {
+                            "id": "lesion_size",
+                            "label": "Size",
+                            "type": "text",
+                            "placeholder": "e.g.,2x3 cm"
+                        },
+                        {
+                            "id": "lesion_characteristics",
+                            "label": "Characteristics",
+                            "type": "text",
+                            "placeholder": "e.g., Sclerotic, lytic"
+                        }
+                    ]
+                }
+            }
+        ],
+        "findings_templates": {
+            "hardware": {
+                "present": "Hardware present: {type}",
+                "others": "Hardware present: {other_description}"
+            },
+            "post_surgical_changes": {
+                "yes": "Post surgical changes in soft tissue"
+            },
+            "deformity": {
+                "default": "{deformity_type}"
+            },
+            "acute_fracture": {
+                "yes_with_region_type": "Acute fracture in {region}, {type}",
+                "yes_with_region": "Acute fracture in {region}",
+                "yes": "Acute fracture"
+            },
+            "fracture_followup": {
+                "yes": "{followup_type} in {region}"
+            },
+            "joint_effusion": {
+                "mild": "Mild joint effusion",
+                "moderate": "Moderate joint effusion",
+                "severe": "Severe joint effusion"
+            },
+            "vascular_calcification": {
+                "present": "Vascular calcification present"
+            },
+            "chondrocalcinosis": {
+                "yes": "Chondrocalcinosis present"
+            },
+            "lesion": {
+                "yes_with_details": "Lesion in {region}, size {size}, {characteristics}",
+                "yes_with_region_size": "Lesion in {region}, size {size}",
+                "yes_with_region": "Lesion in {region}",
+                "yes": "Lesion"
+            }
+        }
+    },
+    {
+        "study_type": "SPINE",
+        "imaging_findings": [
+            {
+                "label": "Spine Region",
+                "type": "radio",
+                "options": [
+                    "Cervical",
+                    "Dorsal",
+                    "Lumbar"
+                ]
+            }
+        ],
+        "checklist_items": [
+            {
+                "id": "hardware",
+                "label": "Hardware",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "hardware_details",
+                            "label": "Hardware Type and Region",
+                            "type": "text",
+                            "placeholder": "e.g., Posterior cervical fusion C3-C6"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "lordosis",
+                "label": "Lordosis",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "lordosis_type",
+                            "label": "Lordosis Type",
+                            "type": "radio",
+                            "options": [
+                                "Hyperlordosis",
+                                "Hypolordosis",
+                                "Straightening",
+                                "Kyphosis"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "scoliosis",
+                "label": "Scoliosis",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "scoliosis_type",
+                            "label": "Scoliosis Type",
+                            "type": "radio",
+                            "options": [
+                                "Dextro",
+                                "Levo"
+                            ]
+                        },
+                        {
+                            "id": "scoliosis_center",
+                            "label": "Centered at vertebral body",
+                            "type": "text",
+                            "placeholder": "e.g., T7-T8",
+                            "show_when": "scoliosis_center"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "multilevel_degenerative_changes",
+                "label": "Multilevel degenerative changes",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "degenerative_severity",
+                            "label": "Severity",
+                            "type": "radio",
+                            "options": [
+                                "Mild",
+                                "Moderate",
+                                "Severe"
+                            ]
+                        },
+                        {
+                            "id": "degenerative_pronounced_at",
+                            "label": "More pronounced at vertebral body",
+                            "type": "text",
+                            "placeholder": "e.g., L4-L5"
+                        },
+                        {
+                            "id": "facet_arthritis_severity",
+                            "label": "Facet arthritis severity",
+                            "type": "radio",
+                            "options": [
+                                "Mild",
+                                "Moderate",
+                                "Severe"
+                            ]
+                        },
+                        {
+                            "id": "facet_arthritis_location",
+                            "label": "Facet arthritis vertebral body",
+                            "type": "text",
+                            "placeholder": "e.g., L3-L4, L4-L5"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "fracture",
+                "label": "Fracture",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "fracture_type",
+                            "label": "Fracture type",
+                            "type": "text",
+                            "placeholder": "e.g., Compression fracture"
+                        },
+                        {
+                            "id": "fracture_vertebral_body",
+                            "label": "Vertebral body",
+                            "type": "text",
+                            "placeholder": "e.g., L1"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "anterolisthesis",
+                "label": "Anterolisthesis",
+                "type": "radio",
+                "options": [
+                    "Present",
+                    "Absent"
+                ],
+                "conditional": {
+                    "condition": "Present",
+                    "sub_items": [
+                        {
+                            "id": "anterolisthesis_details",
+                            "label": "Anterolisthesis details",
+                            "type": "text",
+                            "placeholder": "e.g., L4 on L5"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "motion_flexion_extension",
+                "label": "No motion on flexion extension view",
+                "type": "radio",
+                "options": [
+                    "Present",
+                    "Absent"
+                ],
+                "conditional": {
+                    "condition": "Present",
+                    "sub_items": [
+                        {
+                            "id": "motion_measurement",
+                            "label": "Measurement",
+                            "type": "text",
+                            "placeholder": "e.g.,2mm"
+                        },
+                        {
+                            "id": "motion_vertebral_body",
+                            "label": "Vertebral body",
+                            "type": "text",
+                            "placeholder": "e.g., C5-C6"
+                        }
+                    ]
+                }
+            }
+        ],
+        "findings_templates": {
+            "hardware": {
+                "yes": "Hardware present: {hardware_details}"
+            },
+            "lordosis": {
+                "yes": "{lordosis_type} present"
+            },
+            "scoliosis": {
+                "yes_with_center": "{scoliosis_type} scoliosis centered at {scoliosis_center}",
+                "yes": "{scoliosis_type} scoliosis"
+            },
+            "multilevel_degenerative_changes": {
+                "yes_with_severity_pronounced": "{severity} multilevel degenerative changes, more pronounced at {pronounced_at}",
+                "yes_with_severity": "{severity} multilevel degenerative changes",
+                "yes": "Multilevel degenerative changes"
+            },
+            "facet_arthritis": {
+                "with_location": "{facet_severity} facet arthritis at {facet_location}",
+                "default": "{facet_severity} facet arthritis"
+            },
+            "fracture": {
+                "yes_with_type_body": "{fracture_type} at {vertebral_body}",
+                "yes_with_type": "{fracture_type}",
+                "yes": "Fracture"
+            },
+            "anterolisthesis": {
+                "present_with_details": "Anterolisthesis: {anterolisthesis_details}",
+                "present": "Anterolisthesis present"
+            },
+            "motion_flexion_extension": {
+                "present_with_measurement_body": "No motion on flexion extension view: {measurement} at {vertebral_body}",
+                "present_with_body": "No motion on flexion extension view at {vertebral_body}",
+                "present": "No motion on flexion extension view"
+            }
+        }
+    }
+]
