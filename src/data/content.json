@@ -41,35 +41,35 @@
                             "label": "Arthrodesis and screw fixation - Region",
                             "type": "text",
                             "placeholder": "e.g.,1st MTP joint",
-                            "show_when": "arthrodesis_region"
+                            "show_when": "hardware_types_includes_Arthrodesis and screw fixation"
                         },
                         {
                             "id": "plate_screw_region",
                             "label": "Plate and screw fixation - Region",
                             "type": "text",
                             "placeholder": "e.g., Midfoot",
-                            "show_when": "plate_screw_region"
+                            "show_when": "hardware_types_includes_Plate and screw fixation"
                         },
                         {
                             "id": "kwire_region",
                             "label": "K wire - Region",
                             "type": "text",
                             "placeholder": "e.g.,5th metatarsal",
-                            "show_when": "kwire_region"
+                            "show_when": "hardware_types_includes_K wire"
                         },
                         {
                             "id": "screws_region",
                             "label": "Screws - Region",
                             "type": "text",
                             "placeholder": "e.g., Calcaneus",
-                            "show_when": "screws_region"
+                            "show_when": "hardware_types_includes_Screws"
                         },
                         {
                             "id": "staples_region",
                             "label": "Staples - Region",
                             "type": "text",
                             "placeholder": "e.g., Forefoot",
-                            "show_when": "staples_region"
+                            "show_when": "hardware_types_includes_Staples"
                         }
                     ]
                 }
@@ -87,10 +87,7 @@
                 "id": "degenerative_changes",
                 "label": "Degenerative changes",
                 "type": "radio",
-                "options": [
-                    "Yes",
-                    "No"
-                ],
+                "options": [ "Yes", "No" ],
                 "conditional": {
                     "condition": "Yes",
                     "sub_items": [
@@ -99,44 +96,39 @@
                             "label": "Affected Joints (multi-select)",
                             "type": "checkbox",
                             "options": [
-                                "PIP",
-                                "DIP",
-                                "IP",
-                                "MTP",
-                                "TMT",
-                                "Naviculocuniform joint",
-                                "Cubonavicular joint",
-                                "Talonavicular joint",
-                                "Calcaneo cuboid joint",
-                                "Subtalar joint"
-                            ]
+                                "PIP", "DIP", "IP", "MTP", "TMT",
+                                "Naviculocuniform joint", "Cubonavicular joint", "Talonavicular joint",
+                                "Calcaneo cuboid joint", "Subtalar joint"
+                            ],
+                            "follow_up_assessments": {
+                                "title": "Joint-specific assessments",
+                                "items": [
+                                    {
+                                        "id": "severity",
+                                        "label": "{option} Severity",
+                                        "type": "radio",
+                                        "options": ["Mild", "Moderate", "Severe"]
+                                    }
+                                ]
+                            }
                         },
                         {
                             "id": "joint_space_narrowing",
                             "label": "Joint space narrowing",
                             "type": "radio",
-                            "options": [
-                                "Present",
-                                "Absent"
-                            ]
+                            "options": [ "Present", "Absent" ]
                         },
                         {
                             "id": "osteophytes",
                             "label": "Osteophytes",
                             "type": "radio",
-                            "options": [
-                                "Present",
-                                "Absent"
-                            ]
+                            "options": [ "Present", "Absent" ]
                         },
                         {
                             "id": "sclerotic_changes",
                             "label": "Sclerotic changes",
                             "type": "radio",
-                            "options": [
-                                "Present",
-                                "Absent"
-                            ]
+                            "options": [ "Present", "Absent" ]
                         }
                     ]
                 }
@@ -161,29 +153,25 @@
                                 "Pes planus deformity",
                                 "Flexion deformity",
                                 "Charcot foot"
+                            ]
+                        },
+                        {
+                            "id": "hallux_valgus_mtp_changes",
+                            "label": "1st MTP degenerative changes (for Hallux valgus)",
+                            "type": "radio",
+                            "options": [
+                                "Mild",
+                                "Moderate",
+                                "Severe"
                             ],
-                            "conditional": {
-                                "condition": "Hallux valgus deformity",
-                                "sub_items": [
-                                    {
-                                        "id": "hallux_valgus_mtp_changes",
-                                        "label": "1st MTP degenerative changes (for Hallux valgus)",
-                                        "type": "radio",
-                                        "options": [
-                                            "Mild",
-                                            "Moderate",
-                                            "Severe"
-                                        ]
-                                    }
-                                ]
-                            }
+                            "show_when": "deformity_type_equals_Hallux valgus deformity"
                         },
                         {
                             "id": "flexion_deformity_region",
                             "label": "Flexion deformity - Region",
                             "type": "text",
                             "placeholder": "e.g., 2nd toe",
-                            "show_when": "flexion_deformity_region"
+                            "show_when": "deformity_type_equals_Flexion deformity"
                         }
                     ]
                 }
@@ -275,17 +263,14 @@
                             "options": [
                                 "Old healed fracture",
                                 "Healing fracture"
-                            ],
-                            "conditional_any": {
-                                "sub_items": [
-                                    {
-                                        "id": "followup_region",
-                                        "label": "Region",
-                                        "type": "text",
-                                        "placeholder": "e.g., Calcaneus"
-                                    }
-                                ]
-                            }
+                            ]
+                        },
+                        {
+                            "id": "followup_region",
+                            "label": "Region",
+                            "type": "text",
+                            "placeholder": "e.g., Calcaneus",
+                            "show_when": "followup_type_not_empty"
                         }
                     ]
                 }
@@ -395,18 +380,14 @@
                                 "Intermedullary screw and nail fixation",
                                 "IUD",
                                 "Others"
-                            ],
-                            "conditional": {
-                                "condition": "Others",
-                                "sub_items": [
-                                    {
-                                        "id": "hardware_other_description",
-                                        "label": "Specify other hardware",
-                                        "type": "text",
-                                        "placeholder": "e.g., Screws, plates"
-                                    }
-                                ]
-                            }
+                            ]
+                        },
+                        {
+                            "id": "hardware_other_description",
+                            "label": "Specify other hardware",
+                            "type": "text",
+                            "placeholder": "e.g., Screws, plates",
+                            "show_when": "hardware_type_equals_Others"
                         }
                     ]
                 }
@@ -533,17 +514,14 @@
                             "options": [
                                 "Old healed fracture",
                                 "Healing fracture"
-                            ],
-                            "conditional_any": {
-                                "sub_items": [
-                                    {
-                                        "id": "followup_region",
-                                        "label": "Region",
-                                        "type": "text",
-                                        "placeholder": "e.g., Greater trochanter"
-                                    }
-                                ]
-                            }
+                            ]
+                        },
+                        {
+                            "id": "followup_region",
+                            "label": "Region",
+                            "type": "text",
+                            "placeholder": "e.g., Greater trochanter",
+                            "show_when": "followup_type_not_empty"
                         }
                     ]
                 }
@@ -692,18 +670,14 @@
                                 "Plate and screw fixation",
                                 "Rotator cuff repair",
                                 "Others"
-                            ],
-                            "conditional": {
-                                "condition": "Others",
-                                "sub_items": [
-                                    {
-                                        "id": "hardware_other_description",
-                                        "label": "Specify other hardware",
-                                        "type": "text",
-                                        "placeholder": "e.g., suture anchors, wires"
-                                    }
-                                ]
-                            }
+                            ]
+                        },
+                        {
+                            "id": "hardware_other_description",
+                            "label": "Specify other hardware",
+                            "type": "text",
+                            "placeholder": "e.g., suture anchors, wires",
+                            "show_when": "hardware_type_equals_Others"
                         }
                     ]
                 }
@@ -738,53 +712,48 @@
                             ]
                         },
                         {
-                            "id": "ac_severity",
-                            "label": "AC Joint Severity",
-                            "type": "radio",
-                            "options": [
-                                "Mild",
-                                "Moderate",
-                                "Severe"
-                            ],
-                            "show_when": "ac_severity"
+                            "id": "ac_joint_followup",
+                            "type": "group",
+                            "show_when": "joints_includes_Acromioclavicular (AC) joint",
+                            "sub_items": [
+                                {
+                                    "id": "ac_severity",
+                                    "label": "AC Joint Severity",
+                                    "type": "radio",
+                                    "options": ["Mild", "Moderate", "Severe"]
+                                },
+                                {
+                                    "id": "ac_osteophytes",
+                                    "label": "AC Joint Osteophytes",
+                                    "type": "radio",
+                                    "options": ["Present", "Absent"]
+                                },
+                                {
+                                    "id": "ac_joint_space_narrowing",
+                                    "label": "AC Joint Space Widening (measurement)",
+                                    "type": "text",
+                                    "placeholder": "e.g., 2mm"
+                                }
+                            ]
                         },
                         {
-                            "id": "ac_osteophytes",
-                            "label": "AC Joint Osteophytes",
-                            "type": "radio",
-                            "options": [
-                                "Present",
-                                "Absent"
-                            ],
-                            "show_when": "ac_severity"
-                        },
-                        {
-                            "id": "ac_joint_space_narrowing",
-                            "label": "AC Joint Space Widening (measurement)",
-                            "type": "text",
-                            "placeholder": "e.g., 2mm",
-                            "show_when": "ac_severity"
-                        },
-                        {
-                            "id": "glenohumeral_severity",
-                            "label": "Glenohumeral Joint Severity",
-                            "type": "radio",
-                            "options": [
-                                "Mild",
-                                "Moderate",
-                                "Severe"
-                            ],
-                            "show_when": "glenohumeral_severity"
-                        },
-                        {
-                            "id": "glenohumeral_osteophytes",
-                            "label": "Glenohumeral Joint Osteophytes",
-                            "type": "radio",
-                            "options": [
-                                "Present",
-                                "Absent"
-                            ],
-                            "show_when": "glenohumeral_severity"
+                            "id": "glenohumeral_joint_followup",
+                            "type": "group",
+                            "show_when": "joints_includes_Glenohumeral joint",
+                            "sub_items": [
+                                {
+                                    "id": "glenohumeral_severity",
+                                    "label": "Glenohumeral Joint Severity",
+                                    "type": "radio",
+                                    "options": ["Mild", "Moderate", "Severe"]
+                                },
+                                {
+                                    "id": "glenohumeral_osteophytes",
+                                    "label": "Glenohumeral Joint Osteophytes",
+                                    "type": "radio",
+                                    "options": ["Present", "Absent"]
+                                }
+                            ]
                         }
                     ]
                 }
@@ -833,17 +802,14 @@
                             "options": [
                                 "Old healed fracture",
                                 "Healing fracture"
-                            ],
-                            "conditional_any": {
-                                "sub_items": [
-                                    {
-                                        "id": "followup_region",
-                                        "label": "Region",
-                                        "type": "text",
-                                        "placeholder": "e.g., Scapula, Clavicle"
-                                    }
-                                ]
-                            }
+                            ]
+                        },
+                        {
+                            "id": "followup_region",
+                            "label": "Region",
+                            "type": "text",
+                            "placeholder": "e.g., Scapula, Clavicle",
+                            "show_when": "followup_type_not_empty"
                         }
                     ]
                 }
@@ -917,17 +883,14 @@
                                 "Grade 1",
                                 "Grade 2",
                                 "Grade 3"
-                            ],
-                            "conditional_any": {
-                                "sub_items": [
-                                    {
-                                        "id": "ac_separation_measurement",
-                                        "label": "Measurement",
-                                        "type": "text",
-                                        "placeholder": "e.g.,5mm displacement"
-                                    }
-                                ]
-                            }
+                            ]
+                        },
+                        {
+                            "id": "ac_separation_measurement",
+                            "label": "Measurement",
+                            "type": "text",
+                            "placeholder": "e.g.,5mm displacement",
+                            "show_when": "ac_separation_grade_not_empty"
                         }
                     ]
                 }
@@ -1003,18 +966,14 @@
                                 "Hemi knee replacement (HKR)",
                                 "ACL reconstruction",
                                 "Others"
-                            ],
-                            "conditional": {
-                                "condition": "Others",
-                                "sub_items": [
-                                    {
-                                        "id": "hardware_other_description",
-                                        "label": "Specify other hardware",
-                                        "type": "text",
-                                        "placeholder": "e.g., Plate & screw fixation"
-                                    }
-                                ]
-                            }
+                            ]
+                        },
+                        {
+                            "id": "hardware_other_description",
+                            "label": "Specify other hardware",
+                            "type": "text",
+                            "placeholder": "e.g., Plate & screw fixation",
+                            "show_when": "hardware_type_equals_Others"
                         }
                     ]
                 }
@@ -1050,67 +1009,61 @@
                             ]
                         },
                         {
-                            "id": "medial_severity",
-                            "label": "Medial Compartment Severity",
-                            "type": "radio",
-                            "options": [
-                                "Mild",
-                                "Moderate",
-                                "Severe"
-                            ],
-                            "show_when": "medial_severity"
+                            "id": "medial_followup",
+                            "type": "group",
+                            "show_when": "compartments_includes_Medial",
+                            "sub_items": [
+                                {
+                                    "id": "medial_severity",
+                                    "label": "Medial Compartment Severity",
+                                    "type": "radio",
+                                    "options": ["Mild", "Moderate", "Severe"]
+                                },
+                                {
+                                    "id": "medial_osteophytes",
+                                    "label": "Medial Compartment Osteophytes",
+                                    "type": "radio",
+                                    "options": ["Present", "Absent"]
+                                }
+                            ]
                         },
                         {
-                            "id": "medial_osteophytes",
-                            "label": "Medial Compartment Osteophytes",
-                            "type": "radio",
-                            "options": [
-                                "Present",
-                                "Absent"
-                            ],
-                            "show_when": "medial_severity"
+                            "id": "lateral_followup",
+                            "type": "group",
+                            "show_when": "compartments_includes_Lateral",
+                            "sub_items": [
+                                {
+                                    "id": "lateral_severity",
+                                    "label": "Lateral Compartment Severity",
+                                    "type": "radio",
+                                    "options": ["Mild", "Moderate", "Severe"]
+                                },
+                                {
+                                    "id": "lateral_osteophytes",
+                                    "label": "Lateral Compartment Osteophytes",
+                                    "type": "radio",
+                                    "options": ["Present", "Absent"]
+                                }
+                            ]
                         },
                         {
-                            "id": "lateral_severity",
-                            "label": "Lateral Compartment Severity",
-                            "type": "radio",
-                            "options": [
-                                "Mild",
-                                "Moderate",
-                                "Severe"
-                            ],
-                            "show_when": "lateral_severity"
-                        },
-                        {
-                            "id": "lateral_osteophytes",
-                            "label": "Lateral Compartment Osteophytes",
-                            "type": "radio",
-                            "options": [
-                                "Present",
-                                "Absent"
-                            ],
-                            "show_when": "lateral_severity"
-                        },
-                        {
-                            "id": "patellofemoral_severity",
-                            "label": "Patellofemoral Compartment Severity",
-                            "type": "radio",
-                            "options": [
-                                "Mild",
-                                "Moderate",
-                                "Severe"
-                            ],
-                            "show_when": "patellofemoral_severity"
-                        },
-                        {
-                            "id": "patellofemoral_osteophytes",
-                            "label": "Patellofemoral Compartment Osteophytes",
-                            "type": "radio",
-                            "options": [
-                                "Present",
-                                "Absent"
-                            ],
-                            "show_when": "patellofemoral_severity"
+                            "id": "patellofemoral_followup",
+                            "type": "group",
+                            "show_when": "compartments_includes_Patellofemoral",
+                            "sub_items": [
+                                {
+                                    "id": "patellofemoral_severity",
+                                    "label": "Patellofemoral Compartment Severity",
+                                    "type": "radio",
+                                    "options": ["Mild", "Moderate", "Severe"]
+                                },
+                                {
+                                    "id": "patellofemoral_osteophytes",
+                                    "label": "Patellofemoral Compartment Osteophytes",
+                                    "type": "radio",
+                                    "options": ["Present", "Absent"]
+                                }
+                            ]
                         }
                     ]
                 }
@@ -1182,17 +1135,14 @@
                             "options": [
                                 "Old healed fracture",
                                 "Healing fracture"
-                            ],
-                            "conditional_any": {
-                                "sub_items": [
-                                    {
-                                        "id": "followup_region",
-                                        "label": "Region",
-                                        "type": "text",
-                                        "placeholder": "e.g., Proximal tibia"
-                                    }
-                                ]
-                            }
+                            ]
+                        },
+                        {
+                            "id": "followup_region",
+                            "label": "Region",
+                            "type": "text",
+                            "placeholder": "e.g., Proximal tibia",
+                            "show_when": "followup_type_not_empty"
                         }
                     ]
                 }
@@ -1381,7 +1331,7 @@
                             "label": "Centered at vertebral body",
                             "type": "text",
                             "placeholder": "e.g., T7-T8",
-                            "show_when": "scoliosis_center"
+                            "show_when": "scoliosis_type_not_empty"
                         }
                     ]
                 }
