@@ -1,0 +1,2102 @@
+{
+  "studies": [
+    {
+      "study_type": "FOOT",
+      "items": [
+        {
+          "id": "hardware",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "hardware",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "hardware_types",
+                  "operator": "lengthGreaterThan",
+                  "value": 0
+                }
+              ],
+              "output": {
+                "type": "compound",
+                "parts": [
+                  {
+                    "type": "text",
+                    "template": "Hardware present: "
+                  },
+                  {
+                    "type": "list",
+                    "field": "hardware_types",
+                    "mode": "join",
+                    "delimiter": ", ",
+                    "item": {
+                      "type": "case",
+                      "cases": [
+                        {
+                          "conditions": [
+                            {
+                              "field": "region",
+                              "operator": "exists"
+                            }
+                          ],
+                          "output": "{{option}} in {{region}}"
+                        },
+                        {
+                          "default": true,
+                          "output": "{{option}}"
+                        }
+                      ]
+                    },
+                    "itemContext": [
+                      {
+                        "alias": "region",
+                        "optionMap": {
+                          "Arthrodesis and screw fixation": "arthrodesis_region",
+                          "Plate and screw fixation": "plate_screw_region",
+                          "K wire": "kwire_region",
+                          "Screws": "screws_region",
+                          "Staples": "staples_region"
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "delimiter": ""
+              },
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "hardware",
+                  "operator": "equals",
+                  "value": "Yes"
+                }
+              ],
+              "output": "Hardware present"
+            }
+          ]
+        },
+        {
+          "id": "post_surgical_changes",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "post_surgical_changes",
+                  "operator": "equals",
+                  "value": "Yes"
+                }
+              ],
+              "output": "Post surgical changes in soft tissue"
+            }
+          ]
+        },
+        {
+          "id": "degenerative_changes",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "degenerative_changes",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "joints",
+                  "operator": "lengthGreaterThan",
+                  "value": 0
+                }
+              ],
+              "output": {
+                "type": "list",
+                "field": "joints",
+                "mode": "separate",
+                "delimiter": ", ",
+                "item": {
+                  "type": "case",
+                  "cases": [
+                    {
+                      "conditions": [
+                        {
+                          "field": "severity",
+                          "operator": "exists"
+                        }
+                      ],
+                      "output": "{{severity}} degenerative changes in {{option}}"
+                    },
+                    {
+                      "default": true,
+                      "output": "Degenerative changes in {{option}}"
+                    }
+                  ]
+                },
+                "itemContext": [
+                  {
+                    "alias": "severity",
+                    "fieldTemplate": "{{optionKey}}_severity"
+                  }
+                ]
+              }
+            },
+            {
+              "conditions": [
+                {
+                  "field": "degenerative_changes",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "joint_space_narrowing",
+                  "operator": "in",
+                  "value": [
+                    "Present",
+                    "Yes"
+                  ]
+                }
+              ],
+              "output": "Joint space narrowing present"
+            },
+            {
+              "conditions": [
+                {
+                  "field": "degenerative_changes",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "osteophytes",
+                  "operator": "in",
+                  "value": [
+                    "Present",
+                    "Yes"
+                  ]
+                }
+              ],
+              "output": "Osteophytes present"
+            },
+            {
+              "conditions": [
+                {
+                  "field": "degenerative_changes",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "sclerotic_changes",
+                  "operator": "in",
+                  "value": [
+                    "Present",
+                    "Yes"
+                  ]
+                }
+              ],
+              "output": "Sclerotic changes present"
+            }
+          ]
+        },
+        {
+          "id": "deformity",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "deformity",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "deformity_type",
+                  "operator": "equals",
+                  "value": "Hallux valgus deformity"
+                },
+                {
+                  "field": "hallux_valgus_mtp_changes",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Hallux valgus deformity with {{hallux_valgus_mtp_changes|lower}} 1st MTP degenerative changes",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "deformity",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "deformity_type",
+                  "operator": "equals",
+                  "value": "Flexion deformity"
+                },
+                {
+                  "field": "flexion_deformity_region",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Flexion deformity in {{flexion_deformity_region}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "deformity",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "deformity_type",
+                  "operator": "exists"
+                }
+              ],
+              "output": "{{deformity_type}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "deformity",
+                  "operator": "equals",
+                  "value": "Yes"
+                }
+              ],
+              "output": "Deformity present"
+            }
+          ]
+        },
+        {
+          "id": "calcaneal_spur",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "calcaneal_spur",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "spur_location",
+                  "operator": "lengthGreaterThan",
+                  "value": 0
+                }
+              ],
+              "output": "Calcaneal spur ({{spur_location|join(\", \")}})",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "calcaneal_spur",
+                  "operator": "equals",
+                  "value": "Yes"
+                }
+              ],
+              "output": "Calcaneal spur present"
+            }
+          ]
+        },
+        {
+          "id": "amputation",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "amputation",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "amputation_region",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Amputation in {{amputation_region}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "amputation",
+                  "operator": "equals",
+                  "value": "Yes"
+                }
+              ],
+              "output": "Amputation present"
+            }
+          ]
+        },
+        {
+          "id": "acute_fracture",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "acute_fracture",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "fracture_region",
+                  "operator": "exists"
+                },
+                {
+                  "field": "fracture_type",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Acute fracture in {{fracture_region}}, {{fracture_type}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "acute_fracture",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "fracture_region",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Acute fracture in {{fracture_region}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "acute_fracture",
+                  "operator": "equals",
+                  "value": "Yes"
+                }
+              ],
+              "output": "Acute fracture"
+            }
+          ]
+        },
+        {
+          "id": "fracture_followup",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "fracture_followup",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "followup_type",
+                  "operator": "exists"
+                },
+                {
+                  "field": "followup_region",
+                  "operator": "exists"
+                }
+              ],
+              "output": "{{followup_type}} in {{followup_region}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "fracture_followup",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "followup_type",
+                  "operator": "exists"
+                }
+              ],
+              "output": "{{followup_type}}",
+              "stop": true
+            }
+          ]
+        },
+        {
+          "id": "lesion",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "lesion",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "lesion_region",
+                  "operator": "exists"
+                },
+                {
+                  "field": "lesion_size",
+                  "operator": "exists"
+                },
+                {
+                  "field": "lesion_characteristics",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Lesion in {{lesion_region}}, size {{lesion_size}}, {{lesion_characteristics}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "lesion",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "lesion_region",
+                  "operator": "exists"
+                },
+                {
+                  "field": "lesion_size",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Lesion in {{lesion_region}}, size {{lesion_size}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "lesion",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "lesion_region",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Lesion in {{lesion_region}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "lesion",
+                  "operator": "equals",
+                  "value": "Yes"
+                }
+              ],
+              "output": "Lesion present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "study_type": "HIP",
+      "items": [
+        {
+          "id": "hardware",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "hardware",
+                  "operator": "equals",
+                  "value": "Present"
+                },
+                {
+                  "field": "hardware_type",
+                  "operator": "equals",
+                  "value": "Others"
+                },
+                {
+                  "field": "hardware_other_description",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Hardware present: {{hardware_other_description}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "hardware",
+                  "operator": "equals",
+                  "value": "Present"
+                },
+                {
+                  "field": "hardware_type",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Hardware present: {{hardware_type}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "hardware",
+                  "operator": "equals",
+                  "value": "Present"
+                }
+              ],
+              "output": "Hardware present"
+            }
+          ]
+        },
+        {
+          "id": "degenerative_changes",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "degenerative_changes",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "severity",
+                  "operator": "exists"
+                }
+              ],
+              "output": "{{severity}} degenerative changes"
+            },
+            {
+              "conditions": [
+                {
+                  "field": "degenerative_changes",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "severity",
+                  "operator": "notExists"
+                }
+              ],
+              "output": "Degenerative changes present"
+            },
+            {
+              "conditions": [
+                {
+                  "field": "degenerative_changes",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "joint_space_narrowing",
+                  "operator": "in",
+                  "value": [
+                    "Present",
+                    "Yes"
+                  ]
+                }
+              ],
+              "output": "Joint space narrowing present"
+            },
+            {
+              "conditions": [
+                {
+                  "field": "degenerative_changes",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "osteophytes",
+                  "operator": "in",
+                  "value": [
+                    "Present",
+                    "Yes"
+                  ]
+                }
+              ],
+              "output": "Osteophytes present"
+            },
+            {
+              "conditions": [
+                {
+                  "field": "degenerative_changes",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "sclerotic_changes",
+                  "operator": "in",
+                  "value": [
+                    "Present",
+                    "Yes"
+                  ]
+                }
+              ],
+              "output": "Sclerotic changes present"
+            },
+            {
+              "conditions": [
+                {
+                  "field": "degenerative_changes",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "subchondral_bone_cyst",
+                  "operator": "equals",
+                  "value": "Yes"
+                }
+              ],
+              "output": "Subchondral bone cyst present"
+            }
+          ]
+        },
+        {
+          "id": "heterotrophic_calcification",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "heterotrophic_calcification",
+                  "operator": "equals",
+                  "value": "Present"
+                }
+              ],
+              "output": "Heterotrophic calcification present"
+            }
+          ]
+        },
+        {
+          "id": "vascular_calcification",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "vascular_calcification",
+                  "operator": "equals",
+                  "value": "Present"
+                }
+              ],
+              "output": "Vascular calcification present"
+            }
+          ]
+        },
+        {
+          "id": "acute_fracture",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "acute_fracture",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "fracture_region",
+                  "operator": "exists"
+                },
+                {
+                  "field": "fracture_type",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Acute fracture in {{fracture_region}}, {{fracture_type}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "acute_fracture",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "fracture_region",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Acute fracture in {{fracture_region}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "acute_fracture",
+                  "operator": "equals",
+                  "value": "Yes"
+                }
+              ],
+              "output": "Acute fracture"
+            }
+          ]
+        },
+        {
+          "id": "fracture_followup",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "fracture_followup",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "followup_type",
+                  "operator": "exists"
+                },
+                {
+                  "field": "followup_region",
+                  "operator": "exists"
+                }
+              ],
+              "output": "{{followup_type}} in {{followup_region}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "fracture_followup",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "followup_type",
+                  "operator": "exists"
+                }
+              ],
+              "output": "{{followup_type}}",
+              "stop": true
+            }
+          ]
+        },
+        {
+          "id": "deformity",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "deformity",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "deformity_type",
+                  "operator": "exists"
+                }
+              ],
+              "output": "{{deformity_type}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "deformity",
+                  "operator": "equals",
+                  "value": "Yes"
+                }
+              ],
+              "output": "Deformity present"
+            }
+          ]
+        },
+        {
+          "id": "phleboliths",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "phleboliths",
+                  "operator": "equals",
+                  "value": "Present"
+                }
+              ],
+              "output": "Phleboliths present"
+            }
+          ]
+        },
+        {
+          "id": "lesion",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "lesion",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "lesion_region",
+                  "operator": "exists"
+                },
+                {
+                  "field": "lesion_size",
+                  "operator": "exists"
+                },
+                {
+                  "field": "lesion_characteristics",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Lesion in {{lesion_region}}, size {{lesion_size}}, {{lesion_characteristics}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "lesion",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "lesion_region",
+                  "operator": "exists"
+                },
+                {
+                  "field": "lesion_size",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Lesion in {{lesion_region}}, size {{lesion_size}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "lesion",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "lesion_region",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Lesion in {{lesion_region}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "lesion",
+                  "operator": "equals",
+                  "value": "Yes"
+                }
+              ],
+              "output": "Lesion present"
+            }
+          ]
+        },
+        {
+          "id": "dislocation_subluxation",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "dislocation_subluxation",
+                  "operator": "equals",
+                  "value": "Yes"
+                }
+              ],
+              "output": "Dislocation/subluxation present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "study_type": "SHOULDER",
+      "items": [
+        {
+          "id": "hardware",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "hardware",
+                  "operator": "equals",
+                  "value": "Present"
+                },
+                {
+                  "field": "hardware_type",
+                  "operator": "equals",
+                  "value": "Others"
+                },
+                {
+                  "field": "hardware_other_description",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Hardware present: {{hardware_other_description}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "hardware",
+                  "operator": "equals",
+                  "value": "Present"
+                },
+                {
+                  "field": "hardware_type",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Hardware present: {{hardware_type}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "hardware",
+                  "operator": "equals",
+                  "value": "Present"
+                }
+              ],
+              "output": "Hardware present"
+            }
+          ]
+        },
+        {
+          "id": "post_surgical_changes",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "post_surgical_changes",
+                  "operator": "equals",
+                  "value": "Yes"
+                }
+              ],
+              "output": "Post surgical changes in soft tissue"
+            }
+          ]
+        },
+        {
+          "id": "degenerative_changes",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "degenerative_changes",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "joints",
+                  "operator": "lengthGreaterThan",
+                  "value": 0
+                }
+              ],
+              "output": {
+                "type": "list",
+                "field": "joints",
+                "mode": "separate",
+                "delimiter": ", ",
+                "item": {
+                  "type": "case",
+                  "cases": [
+                    {
+                      "conditions": [
+                        {
+                          "field": "option",
+                          "operator": "equals",
+                          "value": "Acromioclavicular (AC) joint"
+                        }
+                      ],
+                      "output": {
+                        "type": "compound",
+                        "parts": [
+                          {
+                            "type": "case",
+                            "cases": [
+                              {
+                                "conditions": [
+                                  {
+                                    "field": "ac_severity",
+                                    "operator": "exists"
+                                  }
+                                ],
+                                "output": "{{ac_severity}} degenerative changes in the acromioclavicular joint"
+                              },
+                              {
+                                "default": true,
+                                "output": "Degenerative changes in the acromioclavicular joint"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "case",
+                            "cases": [
+                              {
+                                "conditions": [
+                                  {
+                                    "field": "ac_osteophytes",
+                                    "operator": "equals",
+                                    "value": "Present"
+                                  }
+                                ],
+                                "output": "with osteophytes"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "case",
+                            "cases": [
+                              {
+                                "conditions": [
+                                  {
+                                    "field": "ac_joint_space_narrowing",
+                                    "operator": "exists"
+                                  }
+                                ],
+                                "output": "(joint space measurement {{ac_joint_space_narrowing}})"
+                              }
+                            ]
+                          }
+                        ],
+                        "delimiter": " "
+                      }
+                    },
+                    {
+                      "conditions": [
+                        {
+                          "field": "option",
+                          "operator": "equals",
+                          "value": "Glenohumeral joint"
+                        }
+                      ],
+                      "output": {
+                        "type": "compound",
+                        "parts": [
+                          {
+                            "type": "case",
+                            "cases": [
+                              {
+                                "conditions": [
+                                  {
+                                    "field": "glenohumeral_severity",
+                                    "operator": "exists"
+                                  }
+                                ],
+                                "output": "{{glenohumeral_severity}} degenerative changes in the glenohumeral joint"
+                              },
+                              {
+                                "default": true,
+                                "output": "Degenerative changes in the glenohumeral joint"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "case",
+                            "cases": [
+                              {
+                                "conditions": [
+                                  {
+                                    "field": "glenohumeral_osteophytes",
+                                    "operator": "equals",
+                                    "value": "Present"
+                                  }
+                                ],
+                                "output": "with osteophytes"
+                              }
+                            ]
+                          }
+                        ],
+                        "delimiter": " "
+                      }
+                    }
+                  ]
+                },
+                "itemContext": [
+                  {
+                    "alias": "ac_severity",
+                    "optionMap": {
+                      "Acromioclavicular (AC) joint": "ac_severity"
+                    }
+                  },
+                  {
+                    "alias": "ac_osteophytes",
+                    "optionMap": {
+                      "Acromioclavicular (AC) joint": "ac_osteophytes"
+                    }
+                  },
+                  {
+                    "alias": "ac_joint_space_narrowing",
+                    "optionMap": {
+                      "Acromioclavicular (AC) joint": "ac_joint_space_narrowing"
+                    }
+                  },
+                  {
+                    "alias": "glenohumeral_severity",
+                    "optionMap": {
+                      "Glenohumeral joint": "glenohumeral_severity"
+                    }
+                  },
+                  {
+                    "alias": "glenohumeral_osteophytes",
+                    "optionMap": {
+                      "Glenohumeral joint": "glenohumeral_osteophytes"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "acute_fracture",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "acute_fracture",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "fracture_region",
+                  "operator": "exists"
+                },
+                {
+                  "field": "fracture_type",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Acute fracture in {{fracture_region}}, {{fracture_type}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "acute_fracture",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "fracture_region",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Acute fracture in {{fracture_region}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "acute_fracture",
+                  "operator": "equals",
+                  "value": "Yes"
+                }
+              ],
+              "output": "Acute fracture"
+            }
+          ]
+        },
+        {
+          "id": "fracture_followup",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "fracture_followup",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "followup_type",
+                  "operator": "exists"
+                },
+                {
+                  "field": "followup_region",
+                  "operator": "exists"
+                }
+              ],
+              "output": "{{followup_type}} in {{followup_region}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "fracture_followup",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "followup_type",
+                  "operator": "exists"
+                }
+              ],
+              "output": "{{followup_type}}",
+              "stop": true
+            }
+          ]
+        },
+        {
+          "id": "rotator_cuff_calcification",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "rotator_cuff_calcification",
+                  "operator": "equals",
+                  "value": "Present"
+                }
+              ],
+              "output": "Rotator cuff calcification present"
+            }
+          ]
+        },
+        {
+          "id": "lesion",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "lesion",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "lesion_region",
+                  "operator": "exists"
+                },
+                {
+                  "field": "lesion_size",
+                  "operator": "exists"
+                },
+                {
+                  "field": "lesion_characteristics",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Lesion in {{lesion_region}}, size {{lesion_size}}, {{lesion_characteristics}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "lesion",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "lesion_region",
+                  "operator": "exists"
+                },
+                {
+                  "field": "lesion_size",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Lesion in {{lesion_region}}, size {{lesion_size}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "lesion",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "lesion_region",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Lesion in {{lesion_region}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "lesion",
+                  "operator": "equals",
+                  "value": "Yes"
+                }
+              ],
+              "output": "Lesion present"
+            }
+          ]
+        },
+        {
+          "id": "dislocation_subluxation",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "dislocation_subluxation",
+                  "operator": "equals",
+                  "value": "Yes"
+                }
+              ],
+              "output": "Dislocation/subluxation present"
+            }
+          ]
+        },
+        {
+          "id": "ac_joint_separation",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "ac_joint_separation",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "ac_separation_grade",
+                  "operator": "exists"
+                },
+                {
+                  "field": "ac_separation_measurement",
+                  "operator": "exists"
+                }
+              ],
+              "output": "AC joint separation grade {{ac_separation_grade}} (measurement {{ac_separation_measurement}})",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "ac_joint_separation",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "ac_separation_grade",
+                  "operator": "exists"
+                }
+              ],
+              "output": "AC joint separation grade {{ac_separation_grade}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "ac_joint_separation",
+                  "operator": "equals",
+                  "value": "Yes"
+                }
+              ],
+              "output": "AC joint separation present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "study_type": "KNEE",
+      "items": [
+        {
+          "id": "hardware",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "hardware",
+                  "operator": "equals",
+                  "value": "Present"
+                },
+                {
+                  "field": "hardware_type",
+                  "operator": "equals",
+                  "value": "Others"
+                },
+                {
+                  "field": "hardware_other_description",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Hardware present: {{hardware_other_description}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "hardware",
+                  "operator": "equals",
+                  "value": "Present"
+                },
+                {
+                  "field": "hardware_type",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Hardware present: {{hardware_type}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "hardware",
+                  "operator": "equals",
+                  "value": "Present"
+                }
+              ],
+              "output": "Hardware present"
+            }
+          ]
+        },
+        {
+          "id": "post_surgical_changes",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "post_surgical_changes",
+                  "operator": "equals",
+                  "value": "Yes"
+                }
+              ],
+              "output": "Post surgical changes in soft tissue"
+            }
+          ]
+        },
+        {
+          "id": "degenerative_changes",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "degenerative_changes",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "compartments",
+                  "operator": "lengthGreaterThan",
+                  "value": 0
+                }
+              ],
+              "output": {
+                "type": "list",
+                "field": "compartments",
+                "mode": "separate",
+                "delimiter": ", ",
+                "item": {
+                  "type": "compound",
+                  "parts": [
+                    {
+                      "type": "case",
+                      "cases": [
+                        {
+                          "conditions": [
+                            {
+                              "field": "severity",
+                              "operator": "exists"
+                            }
+                          ],
+                          "output": "{{severity}} degenerative changes in the {{option|lower}} compartment"
+                        },
+                        {
+                          "default": true,
+                          "output": "Degenerative changes in the {{option|lower}} compartment"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "case",
+                      "cases": [
+                        {
+                          "conditions": [
+                            {
+                              "field": "osteophytes",
+                              "operator": "equals",
+                              "value": "Present"
+                            }
+                          ],
+                          "output": "with osteophytes"
+                        }
+                      ]
+                    }
+                  ],
+                  "delimiter": " "
+                },
+                "itemContext": [
+                  {
+                    "alias": "severity",
+                    "optionMap": {
+                      "Medial": "medial_severity",
+                      "Lateral": "lateral_severity",
+                      "Patellofemoral": "patellofemoral_severity"
+                    }
+                  },
+                  {
+                    "alias": "osteophytes",
+                    "optionMap": {
+                      "Medial": "medial_osteophytes",
+                      "Lateral": "lateral_osteophytes",
+                      "Patellofemoral": "patellofemoral_osteophytes"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "deformity",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "deformity",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "deformity_type",
+                  "operator": "exists"
+                }
+              ],
+              "output": "{{deformity_type}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "deformity",
+                  "operator": "equals",
+                  "value": "Yes"
+                }
+              ],
+              "output": "Deformity present"
+            }
+          ]
+        },
+        {
+          "id": "acute_fracture",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "acute_fracture",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "fracture_region",
+                  "operator": "exists"
+                },
+                {
+                  "field": "fracture_type",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Acute fracture in {{fracture_region}}, {{fracture_type}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "acute_fracture",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "fracture_region",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Acute fracture in {{fracture_region}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "acute_fracture",
+                  "operator": "equals",
+                  "value": "Yes"
+                }
+              ],
+              "output": "Acute fracture"
+            }
+          ]
+        },
+        {
+          "id": "fracture_followup",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "fracture_followup",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "followup_type",
+                  "operator": "exists"
+                },
+                {
+                  "field": "followup_region",
+                  "operator": "exists"
+                }
+              ],
+              "output": "{{followup_type}} in {{followup_region}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "fracture_followup",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "followup_type",
+                  "operator": "exists"
+                }
+              ],
+              "output": "{{followup_type}}",
+              "stop": true
+            }
+          ]
+        },
+        {
+          "id": "joint_effusion",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "joint_effusion",
+                  "operator": "equals",
+                  "value": "Present"
+                }
+              ],
+              "output": "Joint effusion present"
+            }
+          ]
+        },
+        {
+          "id": "vascular_calcification",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "vascular_calcification",
+                  "operator": "equals",
+                  "value": "Present"
+                }
+              ],
+              "output": "Vascular calcification present"
+            }
+          ]
+        },
+        {
+          "id": "chondrocalcinosis",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "chondrocalcinosis",
+                  "operator": "equals",
+                  "value": "Present"
+                }
+              ],
+              "output": "Chondrocalcinosis present"
+            }
+          ]
+        },
+        {
+          "id": "lesion",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "lesion",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "lesion_region",
+                  "operator": "exists"
+                },
+                {
+                  "field": "lesion_size",
+                  "operator": "exists"
+                },
+                {
+                  "field": "lesion_characteristics",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Lesion in {{lesion_region}}, size {{lesion_size}}, {{lesion_characteristics}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "lesion",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "lesion_region",
+                  "operator": "exists"
+                },
+                {
+                  "field": "lesion_size",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Lesion in {{lesion_region}}, size {{lesion_size}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "lesion",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "lesion_region",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Lesion in {{lesion_region}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "lesion",
+                  "operator": "equals",
+                  "value": "Yes"
+                }
+              ],
+              "output": "Lesion present"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "study_type": "SPINE",
+      "items": [
+        {
+          "id": "hardware",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "hardware",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "hardware_details",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Hardware present: {{hardware_details}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "hardware",
+                  "operator": "equals",
+                  "value": "Yes"
+                }
+              ],
+              "output": "Hardware present"
+            }
+          ]
+        },
+        {
+          "id": "lordosis",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "lordosis",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "lordosis_type",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Lordosis: {{lordosis_type}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "lordosis",
+                  "operator": "equals",
+                  "value": "Yes"
+                }
+              ],
+              "output": "Lordosis present"
+            }
+          ]
+        },
+        {
+          "id": "scoliosis",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "scoliosis",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "scoliosis_type",
+                  "operator": "exists"
+                },
+                {
+                  "field": "scoliosis_center",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Scoliosis: {{scoliosis_type}} (centered at {{scoliosis_center}})",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "scoliosis",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "scoliosis_type",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Scoliosis: {{scoliosis_type}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "scoliosis",
+                  "operator": "equals",
+                  "value": "Yes"
+                }
+              ],
+              "output": "Scoliosis present"
+            }
+          ]
+        },
+        {
+          "id": "multilevel_degenerative_changes",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "multilevel_degenerative_changes",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "degenerative_severity",
+                  "operator": "exists"
+                },
+                {
+                  "field": "degenerative_pronounced_at",
+                  "operator": "exists"
+                }
+              ],
+              "output": "{{degenerative_severity}} multilevel degenerative changes pronounced at {{degenerative_pronounced_at}}"
+            },
+            {
+              "conditions": [
+                {
+                  "field": "multilevel_degenerative_changes",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "degenerative_severity",
+                  "operator": "exists"
+                },
+                {
+                  "field": "degenerative_pronounced_at",
+                  "operator": "notExists"
+                }
+              ],
+              "output": "{{degenerative_severity}} multilevel degenerative changes"
+            },
+            {
+              "conditions": [
+                {
+                  "field": "multilevel_degenerative_changes",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "degenerative_severity",
+                  "operator": "notExists"
+                },
+                {
+                  "field": "degenerative_pronounced_at",
+                  "operator": "notExists"
+                }
+              ],
+              "output": "Multilevel degenerative changes present"
+            },
+            {
+              "conditions": [
+                {
+                  "field": "multilevel_degenerative_changes",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "facet_arthritis_severity",
+                  "operator": "exists"
+                },
+                {
+                  "field": "facet_arthritis_location",
+                  "operator": "exists"
+                }
+              ],
+              "output": "{{facet_arthritis_severity}} facet arthritis at {{facet_arthritis_location}}"
+            },
+            {
+              "conditions": [
+                {
+                  "field": "multilevel_degenerative_changes",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "facet_arthritis_severity",
+                  "operator": "exists"
+                }
+              ],
+              "output": "{{facet_arthritis_severity}} facet arthritis"
+            }
+          ]
+        },
+        {
+          "id": "fracture",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "fracture",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "fracture_type",
+                  "operator": "exists"
+                },
+                {
+                  "field": "fracture_vertebral_body",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Vertebral fracture: {{fracture_type}} at {{fracture_vertebral_body}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "fracture",
+                  "operator": "equals",
+                  "value": "Yes"
+                },
+                {
+                  "field": "fracture_type",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Vertebral fracture: {{fracture_type}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "fracture",
+                  "operator": "equals",
+                  "value": "Yes"
+                }
+              ],
+              "output": "Vertebral fracture present"
+            }
+          ]
+        },
+        {
+          "id": "anterolisthesis",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "anterolisthesis",
+                  "operator": "equals",
+                  "value": "Present"
+                },
+                {
+                  "field": "anterolisthesis_details",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Anterolisthesis present: {{anterolisthesis_details}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "anterolisthesis",
+                  "operator": "equals",
+                  "value": "Present"
+                }
+              ],
+              "output": "Anterolisthesis present"
+            }
+          ]
+        },
+        {
+          "id": "motion_flexion_extension",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "motion_flexion_extension",
+                  "operator": "equals",
+                  "value": "Present"
+                },
+                {
+                  "field": "motion_measurement",
+                  "operator": "exists"
+                },
+                {
+                  "field": "motion_vertebral_body",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Abnormal motion at {{motion_vertebral_body}} (measurement {{motion_measurement}})",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "motion_flexion_extension",
+                  "operator": "equals",
+                  "value": "Present"
+                },
+                {
+                  "field": "motion_vertebral_body",
+                  "operator": "exists"
+                }
+              ],
+              "output": "Abnormal motion at {{motion_vertebral_body}}",
+              "stop": true
+            },
+            {
+              "conditions": [
+                {
+                  "field": "motion_flexion_extension",
+                  "operator": "equals",
+                  "value": "Present"
+                }
+              ],
+              "output": "Abnormal motion on flexion/extension"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

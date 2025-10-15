@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
 import { Check, ChevronDown, ChevronUp } from 'lucide-react';
 
@@ -41,6 +41,8 @@ const ChecklistForm = ({ studyData, onSelectionChange }) => {
             }
         } else if (spineRegion) {
             initialData = { [spineRegion.toLowerCase()]: {} };
+        } else {
+            initialData = { default: {} };
         }
         setFormData(initialData);
         setExpandedSections({});
@@ -56,7 +58,8 @@ const ChecklistForm = ({ studyData, onSelectionChange }) => {
 
     const handleInputChange = (side, item, value) => {
         setFormData(prev => {
-            const newSideData = { ...prev[side] };
+            const key = side || 'default';
+            const newSideData = { ...(prev[key] || {}) };
             const oldVal = newSideData[item.id];
             newSideData[item.id] = value;
 
@@ -74,15 +77,17 @@ const ChecklistForm = ({ studyData, onSelectionChange }) => {
                     });
                 });
             }
-            return { ...prev, [side]: newSideData };
+            return { ...prev, [key]: newSideData };
         });
     };
     
+    const getSideData = (side) => formData[side] || formData.default || {};
+
     // **FIXED**: Robustly parses show_when conditions without crashing
     const checkShowWhen = (item, side) => {
         if (!item.show_when) return true;
         const condition = item.show_when;
-        const sideData = formData[side] || {};
+        const sideData = getSideData(side);
     
         if (condition.includes('_includes_')) {
             const [fieldName, ...valueParts] = condition.split('_includes_');
@@ -121,7 +126,8 @@ const ChecklistForm = ({ studyData, onSelectionChange }) => {
 
     const renderInput = (item, side, idOverride = null) => {
         const id = idOverride || item.id;
-        const currentValue = formData[side]?.[id] || (item.type === 'checkbox' ? [] : '');
+        const sideData = getSideData(side);
+        const currentValue = sideData?.[id] || (item.type === 'checkbox' ? [] : '');
         // Standard rendering for radio, checkbox, text
         // This is simplified for brevity but the full logic from your file should be here
          switch (item.type) {
@@ -173,51 +179,79 @@ const ChecklistForm = ({ studyData, onSelectionChange }) => {
     };
 
     // **FIXED**: Simplified and corrected recursive renderer
-    const renderItems = (items, side) => {
+    const renderItems = (items, side, depth = 0, options = {}) => {
         if (!items) return null;
+        const shouldShowLabelDefault = depth > 0;
+
         return items.map((item) => {
             if (!checkShowWhen(item, side)) return null;
 
             if (item.type === 'group') {
-                return <div key={item.id}>{renderItems(item.sub_items, side)}</div>;
+                const groupContainerClass = depth >= 1
+                    ? 'ml-6 mt-4 pl-4 border-l-4 border-orange-500/40 bg-orange-500/10 rounded-lg space-y-4'
+                    : 'ml-4 mt-4 pl-4 border-l-2 border-gray-700 space-y-4';
+                return (
+                    <div key={item.id} className={groupContainerClass}>
+                        {renderItems(item.sub_items, side, depth + 1, options)}
+                    </div>
+                );
             }
 
-            const currentValue = formData[side]?.[item.id];
-            
+            const sideData = getSideData(side);
+            const currentValue = sideData[item.id];
+            const shouldShowLabel = options.showLabel ?? shouldShowLabelDefault;
+            const nextDepth = depth + 1;
+            const nestedContainerClass = depth >= 1
+                ? 'ml-6 mt-4 pl-4 border-l-4 border-orange-500/40 bg-orange-500/10 rounded-lg space-y-4'
+                : 'ml-4 mt-4 pl-4 border-l-2 border-gray-700 space-y-4';
+
             return (
-                <div key={item.id}>
-                    {/* **FIXED**: No more duplicate labels */}
-                    {item.label && <label className={`block text-sm font-medium ${theme.colors.text.primary} mb-2`}>{item.label}</label>}
+                <div key={item.id} className='space-y-3'>
+                    {shouldShowLabel && item.label && (
+                        <label className={`block text-sm font-medium ${theme.colors.text.primary}`}>{item.label}</label>
+                    )}
+
                     {renderInput(item, side)}
 
                     {item.conditional && currentValue === item.conditional.condition && (
-                        <div className="ml-4 mt-4 pl-4 border-l-2 border-gray-700 space-y-4">
-                            {renderItems(item.conditional.sub_items, side)}
+                        <div className={nestedContainerClass}>
+                            {renderItems(item.conditional.sub_items, side, nextDepth)}
                         </div>
                     )}
-                    
+
                     {item.follow_up_assessments && Array.isArray(currentValue) && currentValue.length > 0 && (
-                        <ExpandableSection title={item.follow_up_assessments.title} sectionKey={`${side}_${item.id}_followup`}>
-                            {currentValue.map(option => (
-                                <div key={option} className='space-y-4 border-b border-gray-700/50 pb-4 last:border-b-0 last:pb-0'>
-                                    <h5 className='text-sm font-semibold text-orange-400'>{option}</h5>
-                                    {/* Logic to render either dynamic items or grouped items */}
-                                    {item.follow_up_assessments.items ? 
-                                     item.follow_up_assessments.items.map(fuItem => {
-                                        const cleanOption = option.toLowerCase().replace(/[()\s-]/g, '_');
-                                        const id = `${cleanOption}_${fuItem.id}`;
-                                        const label = fuItem.label.replace('{option}', option);
-                                        return (
-                                            <div key={id} className="ml-4">
-                                                <label className={`block text-xs font-medium ${theme.colors.text.secondary} mb-2`}>{label}</label>
-                                                {renderInput({ ...fuItem, id }, side, id)}
-                                            </div>
-                                        );
-                                     }) : 
-                                     renderItems(studyData.checklist_items.flatMap(i => i.conditional?.sub_items || []).find(si => si.show_when && si.show_when.includes(option.split(" ")[0]))?.sub_items, side)
-                                    }
-                                </div>
-                            ))}
+                        <ExpandableSection
+                            title={item.follow_up_assessments.title}
+                            sectionKey={`${side}_${item.id}_followup`}
+                        >
+                            {currentValue.map((option) => {
+                                const cleanOption = option.toLowerCase().replace(/[()\s-]/g, '_');
+                                return (
+                                    <div key={option} className='space-y-4 border-b border-gray-700/50 pb-4 last:border-b-0 last:pb-0'>
+                                        <h5 className='text-sm font-semibold text-orange-400'>{option}</h5>
+                                        {item.follow_up_assessments.items ? (
+                                            item.follow_up_assessments.items.map((fuItem) => {
+                                                const id = `${cleanOption}_${fuItem.id}`;
+                                                const label = fuItem.label.replace('{option}', option);
+                                                return (
+                                                    <div key={id} className='ml-4'>
+                                                        <label className={`block text-xs font-medium ${theme.colors.text.secondary} mb-2`}>{label}</label>
+                                                        {renderInput({ ...fuItem, id }, side, id)}
+                                                    </div>
+                                                );
+                                            })
+                                        ) : (
+                                            renderItems(
+                                                studyData.checklist_items
+                                                    .flatMap((i) => i.conditional?.sub_items || [])
+                                                    .find((si) => si.show_when && si.show_when.includes(option.split(' ')[0]))?.sub_items,
+                                                side,
+                                                nextDepth + 1
+                                            )
+                                        )}
+                                    </div>
+                                );
+                            })}
                         </ExpandableSection>
                     )}
                 </div>
@@ -226,21 +260,24 @@ const ChecklistForm = ({ studyData, onSelectionChange }) => {
     };
     
     // Main render function for a side (Right, Left, etc.)
-    const renderSideChecklist = (side, sideLabel) => (
-        <div className='space-y-6'>
-            <h3 className={`text-xl font-bold ${theme.colors.text.accent} border-b border-gray-700 pb-2`}>
-                {sideLabel} {studyData.study_type} Checklist
-            </h3>
+    const renderSideChecklist = (side, sideLabel) => {
+        const headingPrefix = sideLabel && sideLabel !== studyData.study_type ? `${sideLabel} ` : '';
+        return (
+            <div className='space-y-6'>
+                <h3 className={`text-xl font-bold ${theme.colors.text.accent} border-b border-gray-700 pb-2`}>
+                    {headingPrefix}{studyData.study_type} Checklist
+                </h3>
             {studyData.checklist_items.map((item, index) => (
                 <div key={item.id} className='medical-card'>
                     <label className={`block text-lg font-semibold ${theme.colors.text.primary}`}>
                         {index + 1}. {item.label}
                     </label>
-                    <div className="mt-4 space-y-4">{renderItems([item], side)}</div>
+                    <div className="mt-4 space-y-4">{renderItems([item], side, 0, { showLabel: false })}</div>
                 </div>
             ))}
-        </div>
-    );
+            </div>
+        );
+    };
 
     const hasLaterality = !!laterality;
     const hasSpineRegion = !!spineRegion;
@@ -292,7 +329,9 @@ const ChecklistForm = ({ studyData, onSelectionChange }) => {
                 renderSideChecklist(laterality.toLowerCase(), laterality)
             ) : hasSpineRegion ? (
                 renderSideChecklist(spineRegion.toLowerCase(), spineRegion)
-            ) : <p>No checklist available.</p>}
+            ) : (
+                renderSideChecklist('default', studyData.study_type)
+            )}
         </div>
     );
 };

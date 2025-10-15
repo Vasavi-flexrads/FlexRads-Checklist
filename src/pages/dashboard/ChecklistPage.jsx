@@ -4,6 +4,7 @@ import { useTheme } from '../../contexts/ThemeContext'
 import { ArrowLeft, Copy, FileText, History } from 'lucide-react'
 import ChecklistForm from '../../components/forms/ChecklistForm'
 import content from '../../data/content.json'
+import { buildFindingsForSide } from '../../utils/reportBuilder'
 
 const ChecklistPage = () => {
   const { studyType } = useParams()
@@ -12,8 +13,9 @@ const ChecklistPage = () => {
   
   const [clinicalHistory, setClinicalHistory] = useState('')
   const [selectedFindings, setSelectedFindings] = useState({
-    laterality: 'Right',
-    formData: { right: {} }
+    laterality: '',
+    spineRegion: '',
+    formData: {}
   })
   const [generatedReport, setGeneratedReport] = useState('')
   const [copySuccess, setCopySuccess] = useState(false)
@@ -27,383 +29,104 @@ const ChecklistPage = () => {
     }))
   }, [])
 
-  // Helper function to generate findings from templates
-  const generateFindingFromTemplate = (itemId, value, sideData, templates) => {
-    const template = templates[itemId]
-    if (!template) return null
-
-    // Determine which template variant to use based on available data
-    let templateKey = value.toLowerCase()
-    let templateText = template[templateKey]
-
-    // Handle specific cases with additional data
-    if (itemId === 'hardware') {
-      if (sideData.hardware_details) {
-        templateText = template.yes?.replace('{hardware_details}', sideData.hardware_details)
-      } else if (sideData.hardware_types && sideData.hardware_types.length > 0) {
-        const hardwareDetails = sideData.hardware_types.map(hardware => {
-          const regionKey = hardware.toLowerCase().replace(/[()\s-]/g, '_') + '_region'
-          const region = sideData[regionKey]
-          return region ? `${hardware} in ${region}` : hardware
-        })
-        templateText = template.types?.replace('{types}', hardwareDetails.join(', '))
-      } else if (sideData.hardware_type) {
-        if (sideData.hardware_type === 'Others' && sideData.hardware_other_description) {
-          templateText = template.others?.replace('{other_description}', sideData.hardware_other_description)
-        } else {
-          templateText = template.present?.replace('{type}', sideData.hardware_type)
-        }
-      }
-    } else if (itemId === 'calcaneal_spur') {
-      if (sideData.spur_location && sideData.spur_location.length > 0) {
-        templateText = template.yes_with_location?.replace('{locations}', sideData.spur_location.join(', '))
-      } else {
-        templateText = template.yes
-      }
-    } else if (itemId === 'amputation') {
-      if (sideData.amputation_region) {
-        templateText = template.yes_with_region?.replace('{region}', sideData.amputation_region)
-      } else {
-        templateText = template.yes
-      }
-    } else if (itemId === 'deformity') {
-      if (sideData.deformity_type === 'Hallux valgus deformity' && sideData.hallux_valgus_mtp_changes) {
-        templateText = template.hallux_valgus_with_changes
-          ?.replace('{deformity_type}', sideData.deformity_type)
-          ?.replace('{mtp_changes}', sideData.hallux_valgus_mtp_changes.toLowerCase())
-      } else if (sideData.deformity_type === 'Flexion deformity' && sideData.flexion_deformity_region) {
-        templateText = template.flexion_with_region
-          ?.replace('{deformity_type}', sideData.deformity_type)
-          ?.replace('{region}', sideData.flexion_deformity_region)
-      } else if (sideData.deformity_type) {
-        templateText = template.default?.replace('{deformity_type}', sideData.deformity_type)
-      }
-    } else if (itemId === 'acute_fracture') {
-      if (sideData.fracture_region && sideData.fracture_type) {
-        templateText = template.yes_with_region_type
-          ?.replace('{region}', sideData.fracture_region)
-          ?.replace('{type}', sideData.fracture_type)
-      } else if (sideData.fracture_region) {
-        templateText = template.yes_with_region?.replace('{region}', sideData.fracture_region)
-      } else {
-        templateText = template.yes
-      }
-    } else if (itemId === 'fracture_followup') {
-      if (sideData.followup_type && sideData.followup_region) {
-        templateText = template.yes
-          ?.replace('{followup_type}', sideData.followup_type)
-          ?.replace('{region}', sideData.followup_region)
-      }
-    } else if (itemId === 'lesion') {
-      if (sideData.lesion_region && sideData.lesion_size && sideData.lesion_characteristics) {
-        templateText = template.yes_with_details
-          ?.replace('{region}', sideData.lesion_region)
-          ?.replace('{size}', sideData.lesion_size)
-          ?.replace('{characteristics}', sideData.lesion_characteristics)
-      } else if (sideData.lesion_region && sideData.lesion_size) {
-        templateText = template.yes_with_region_size
-          ?.replace('{region}', sideData.lesion_region)
-          ?.replace('{size}', sideData.lesion_size)
-      } else if (sideData.lesion_region) {
-        templateText = template.yes_with_region?.replace('{region}', sideData.lesion_region)
-      } else {
-        templateText = template.yes
-      }
-    } else if (itemId === 'ac_joint_separation') {
-      if (sideData.ac_separation_grade && sideData.ac_separation_measurement) {
-        templateText = template.yes_with_grade_measurement
-          ?.replace('{grade}', sideData.ac_separation_grade)
-          ?.replace('{measurement}', sideData.ac_separation_measurement)
-      } else if (sideData.ac_separation_grade) {
-        templateText = template.yes_with_grade?.replace('{grade}', sideData.ac_separation_grade)
-      } else {
-        templateText = template.yes
-      }
-    } else if (itemId === 'scoliosis') {
-      if (sideData.scoliosis_type && sideData.scoliosis_center) {
-        templateText = template.yes_with_center
-          ?.replace('{scoliosis_type}', sideData.scoliosis_type)
-          ?.replace('{scoliosis_center}', sideData.scoliosis_center)
-      } else if (sideData.scoliosis_type) {
-        templateText = template.yes?.replace('{scoliosis_type}', sideData.scoliosis_type)
-      }
-    } else if (itemId === 'multilevel_degenerative_changes') {
-      if (sideData.degenerative_severity && sideData.degenerative_pronounced_at) {
-        templateText = template.yes_with_severity_pronounced
-          ?.replace('{severity}', sideData.degenerative_severity)
-          ?.replace('{pronounced_at}', sideData.degenerative_pronounced_at)
-      } else if (sideData.degenerative_severity) {
-        templateText = template.yes_with_severity?.replace('{severity}', sideData.degenerative_severity)
-      } else {
-        templateText = template.yes
-      }
-    } else if (itemId === 'fracture') {
-      if (sideData.fracture_type && sideData.fracture_vertebral_body) {
-        templateText = template.yes_with_type_body
-          ?.replace('{fracture_type}', sideData.fracture_type)
-          ?.replace('{vertebral_body}', sideData.fracture_vertebral_body)
-      } else if (sideData.fracture_type) {
-        templateText = template.yes_with_type?.replace('{fracture_type}', sideData.fracture_type)
-      } else {
-        templateText = template.yes
-      }
-    } else if (itemId === 'anterolisthesis') {
-      if (sideData.anterolisthesis_details) {
-        templateText = template.present_with_details?.replace('{anterolisthesis_details}', sideData.anterolisthesis_details)
-      } else {
-        templateText = template.present
-      }
-    } else if (itemId === 'motion_flexion_extension') {
-      if (sideData.motion_measurement && sideData.motion_vertebral_body) {
-        templateText = template.present_with_measurement_body
-          ?.replace('{measurement}', sideData.motion_measurement)
-          ?.replace('{vertebral_body}', sideData.motion_vertebral_body)
-      } else if (sideData.motion_vertebral_body) {
-        templateText = template.present_with_body?.replace('{vertebral_body}', sideData.motion_vertebral_body)
-      } else {
-        templateText = template.present
-      }
-    } else if (itemId === 'lordosis') {
-      if (sideData.lordosis_type) {
-        templateText = template.yes?.replace('{lordosis_type}', sideData.lordosis_type)
-      }
+  const generateReport = useCallback(() => {
+    if (!currentStudyData) {
+      setGeneratedReport('')
+      return
     }
 
-    return templateText
-  }
-
-  const generateReport = useCallback(() => {
     const laterality = selectedFindings.laterality
     const spineRegion = selectedFindings.spineRegion
     const formData = selectedFindings.formData || {}
-    
-    let report = ''
-    
-    if (currentStudyData) {
-      const hasSpineRegion = currentStudyData?.imaging_findings?.some(item => item.label === 'Spine Region')
-      const hasLaterality = currentStudyData?.imaging_findings?.some(item => item.label === 'Laterality')
-      
-      if (hasSpineRegion) {
-        report += `X-RAY ${spineRegion?.toUpperCase()} ${currentStudyData.study_type.toUpperCase()}\n\n`
-      } else if (hasLaterality && laterality === 'Bilateral') {
-        report += `X-RAY BILATERAL ${currentStudyData.study_type.toUpperCase()}\n\n`
-      } else if (hasLaterality) {
-        report += `X-RAY ${laterality?.toUpperCase()} ${currentStudyData.study_type.toUpperCase()}\n\n`
-      } else {
-        report += `X-RAY ${currentStudyData.study_type.toUpperCase()}\n\n`
-      }
+
+    const hasSpineRegion = currentStudyData?.imaging_findings?.some((item) => item.label === 'Spine Region')
+    const hasLaterality = currentStudyData?.imaging_findings?.some((item) => item.label === 'Laterality')
+
+    const studyName = currentStudyData.study_type?.toUpperCase?.() || ''
+    let headerContext = studyName
+
+    if (hasSpineRegion && spineRegion) {
+      headerContext = `${spineRegion.toUpperCase()} ${studyName}`
+    } else if (hasLaterality && laterality) {
+      headerContext = laterality === 'Bilateral' ? `BILATERAL ${studyName}` : `${laterality.toUpperCase()} ${studyName}`
     }
 
-    if (clinicalHistory.trim()) {
-      report += `CLINICAL HISTORY:\n${clinicalHistory.trim()}\n\n`
+    let report = `X-RAY ${headerContext}\n\n`
+
+    const trimmedHistory = clinicalHistory.trim()
+    if (trimmedHistory) {
+      report += `CLINICAL HISTORY:\n${trimmedHistory}\n\n`
     }
-    
+
     report += 'FINDINGS:\n'
-    
-    const generateSideFindings = (side, sideLabel) => {
-      const sideData = formData[side]
-      if (!sideData) return []
-      
-      const findings = []
-      const templates = currentStudyData?.findings_templates || {}
-      
-      // Process each checklist item
-      currentStudyData.checklist_items?.forEach((item, index) => {
-        const value = sideData[item.id]
-        if (!value) return
 
-        // Try to generate finding from template first
-        const templateFinding = generateFindingFromTemplate(item.id, value, sideData, templates)
-        if (templateFinding) {
-          findings.push(templateFinding)
-          return
-        }
-        
-        // Handle facet arthritis separately for spine (not in templates yet)
-        if (currentStudyData.study_type === 'SPINE' && item.id === 'multilevel_degenerative_changes' && value === 'Yes') {
-          const facetSeverity = sideData.facet_arthritis_severity
-          const facetLocation = sideData.facet_arthritis_location
-          
-          if (facetSeverity && facetLocation) {
-            findings.push(`${facetSeverity} facet arthritis at ${facetLocation}`)
-          } else if (facetSeverity) {
-            findings.push(`${facetSeverity} facet arthritis`)
-          }
-        }
-        // Fallback for items not covered by templates
-        if (item.id === 'post_surgical_changes' && value === 'Yes') {
-          findings.push('Post surgical changes in soft tissue')
-        }
-        
-        // Handle degenerative changes dynamically
-        if (item.id === 'degenerative_changes' && value === 'Yes') {
-          const degenerativeItem = currentStudyData.checklist_items.find(ci => ci.id === 'degenerative_changes')
-          if (degenerativeItem?.conditional?.sub_items) {
-            const subItems = degenerativeItem.conditional.sub_items
-            
-            // Handle joints/compartments selection
-            const jointsItem = subItems.find(sub => sub.id === 'joints')
-            const compartmentsItem = subItems.find(sub => sub.id === 'compartments')
-            
-            if (jointsItem) {
-              const selectedJoints = sideData.joints || []
-              if (selectedJoints.length > 0) {
-                const jointFindings = []
-                
-                selectedJoints.forEach(joint => {
-                  const jointKey = joint.toLowerCase().replace(/[()\s-]/g, '_')
-                  const severity = sideData[`${jointKey}_severity`]
-                  const osteophytes = sideData[`${jointKey}_osteophytes`]
-                  
-                  let jointText = ''
-                  if (severity) {
-                    jointText = `${severity} degenerative changes in ${joint}`
-                  } else {
-                    jointText = `Degenerative changes in ${joint}`
-                  }
-                  
-                  if (osteophytes === 'Present') {
-                    jointText += ' with osteophytes'
-                  }
-                  
-                  jointFindings.push(jointText)
-                })
-                
-                if (jointFindings.length > 0) {
-                  findings.push(jointFindings.join(', '))
-                }
-              }
-            }
-            
-            if (compartmentsItem) {
-              const selectedCompartments = sideData.compartments || []
-              if (selectedCompartments.length > 0) {
-                const compartmentFindings = []
-                
-                selectedCompartments.forEach(compartment => {
-                  const severity = sideData[`${compartment.toLowerCase()}_severity`]
-                  const osteophytes = sideData[`${compartment.toLowerCase()}_osteophytes`]
-                  
-                  let compartmentText = ''
-                  if (severity) {
-                    compartmentText = `${severity} degenerative changes in ${compartment.toLowerCase()} compartment`
-                  } else {
-                    compartmentText = `Degenerative changes in ${compartment.toLowerCase()} compartment`
-                  }
-                  
-                  if (osteophytes === 'Present') {
-                    compartmentText += ' with osteophytes'
-                  }
-                  
-                  compartmentFindings.push(compartmentText)
-                })
-                
-                if (compartmentFindings.length > 0) {
-                  findings.push(compartmentFindings.join(', '))
-                }
-              }
-            }
-            
-            // Handle common degenerative features
-            const commonFeatures = []
-            const jointSpaceNarrowing = sideData.joint_space_narrowing
-            const osteophytes = sideData.osteophytes
-            const scleroticChanges = sideData.sclerotic_changes
-            const subchondralBoneCyst = sideData.subchondral_bone_cyst
-            const severity = sideData.severity
-            
-            if (jointSpaceNarrowing === 'Present' || jointSpaceNarrowing === 'Yes') {
-              commonFeatures.push('joint space narrowing')
-            }
-            if (osteophytes === 'Present' || osteophytes === 'Yes') {
-              commonFeatures.push('osteophytes')
-            }
-            if (scleroticChanges === 'Present' || scleroticChanges === 'Yes') {
-              commonFeatures.push('sclerotic changes')
-            }
-            if (subchondralBoneCyst === 'Yes') {
-              commonFeatures.push('subchondral bone cyst')
-            }
-            
-            // If no specific joints/compartments but has common features, create general finding
-            if (commonFeatures.length > 0 && (!jointsItem || !sideData.joints?.length) && (!compartmentsItem || !sideData.compartments?.length)) {
-              let degenerativeText = ''
-              if (severity) {
-                degenerativeText = `${severity} degenerative changes`
-              } else {
-                degenerativeText = 'Degenerative changes'
-              }
-              
-              if (commonFeatures.length > 0) {
-                degenerativeText += ` with ${commonFeatures.join(', ')}`
-              }
-              
-              findings.push(degenerativeText)
-            } else if (commonFeatures.length > 0) {
-              // Add common features as separate findings
-              commonFeatures.forEach(feature => findings.push(feature))
-            } else if ((!jointsItem || !sideData.joints?.length) && (!compartmentsItem || !sideData.compartments?.length) && severity) {
-              // NEW: If only severity is provided, still output a general degenerative change
-              findings.push(`${severity} degenerative changes`)
-            }
-          }
-        }
-      })
-      
-      return findings
+    const globalContext = {
+      laterality,
+      spineRegion,
+      studyType: currentStudyData.study_type,
+      studyLabel: currentStudyData.study_type
     }
-    
-    const hasSpineRegion = currentStudyData?.imaging_findings?.some(item => item.label === 'Spine Region')
-    const hasLaterality = currentStudyData?.imaging_findings?.some(item => item.label === 'Laterality')
-    
+
+    const formatFindings = (list) => list.map((finding, index) => `${index + 1}. ${finding}`).join('\n')
+
     if (hasSpineRegion) {
-      // Handle spine region-based reporting
-      const region = spineRegion?.toLowerCase()
-      const findings = generateSideFindings(region, spineRegion)
-      
+      const regionKey = (spineRegion || '').toLowerCase()
+      const sideData = formData[regionKey] || {}
+      const findings = buildFindingsForSide(currentStudyData.study_type, sideData, {
+        ...globalContext,
+        side: regionKey,
+        sideLabel: spineRegion
+      })
+
       if (findings.length > 0) {
-        findings.forEach((finding, index) => {
-          report += `${index + 1}. ${finding}\n`
-        })
+        report += `${formatFindings(findings)}\n`
       } else {
         report += 'No significant abnormalities detected.\n'
       }
     } else if (hasLaterality && laterality === 'Bilateral') {
-      const rightFindings = generateSideFindings('right', 'Right')
-      const leftFindings = generateSideFindings('left', 'Left')
-      
+      const rightFindings = buildFindingsForSide(
+        currentStudyData.study_type,
+        formData.right || {},
+        { ...globalContext, side: 'right', sideLabel: 'Right' }
+      )
+      const leftFindings = buildFindingsForSide(
+        currentStudyData.study_type,
+        formData.left || {},
+        { ...globalContext, side: 'left', sideLabel: 'Left' }
+      )
+
       if (rightFindings.length > 0) {
-        report += `\nRight ${currentStudyData.study_type.toLowerCase()}:\n`
-        rightFindings.forEach((finding, index) => {
-          report += `${index + 1}. ${finding}\n`
-        })
+        report += `\nRight ${currentStudyData.study_type.toLowerCase()}:\n${formatFindings(rightFindings)}\n`
       }
-      
+
       if (leftFindings.length > 0) {
-        report += `\nLeft ${currentStudyData.study_type.toLowerCase()}:\n`
-        leftFindings.forEach((finding, index) => {
-          report += `${index + 1}. ${finding}\n`
-        })
+        report += `\nLeft ${currentStudyData.study_type.toLowerCase()}:\n${formatFindings(leftFindings)}\n`
       }
-      
+
       if (rightFindings.length === 0 && leftFindings.length === 0) {
         report += `No significant abnormalities detected in bilateral ${currentStudyData.study_type.toLowerCase()}s.\n`
       }
     } else {
-      const side = laterality?.toLowerCase()
-      const findings = generateSideFindings(side, laterality)
-      
+      const fallbackKeys = Object.keys(formData)
+      const sideKey = hasLaterality && laterality ? laterality.toLowerCase() : fallbackKeys[0]
+      const sideData = (sideKey && formData[sideKey]) || formData || {}
+      const sideLabel = hasLaterality && laterality ? laterality : spineRegion || currentStudyData.study_type
+
+      const findings = buildFindingsForSide(
+        currentStudyData.study_type,
+        sideData,
+        { ...globalContext, side: sideKey, sideLabel }
+      )
+
       if (findings.length > 0) {
-        findings.forEach((finding, index) => {
-          report += `${index + 1}. ${finding}\n`
-        })
+        report += `${formatFindings(findings)}\n`
       } else {
         report += 'No significant abnormalities detected.\n'
       }
     }
-    
-    setGeneratedReport(report)
-  }, [selectedFindings, clinicalHistory, currentStudyData])
+
+    setGeneratedReport(report.trimEnd())
+  }, [clinicalHistory, currentStudyData, selectedFindings])
 
   useEffect(() => {
     generateReport()
