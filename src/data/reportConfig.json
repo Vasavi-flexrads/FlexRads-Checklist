@@ -1654,10 +1654,40 @@
                 {
                   "field": "joint_effusion",
                   "operator": "equals",
-                  "value": "Present"
+                  "value": "Mild"
                 }
               ],
-              "output": "Joint effusion present"
+              "output": "Mild joint effusion"
+            }
+          ]
+        },
+        {
+          "id": "joint_effusion",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "joint_effusion",
+                  "operator": "equals",
+                  "value": "Moderate"
+                }
+              ],
+              "output": "Moderate joint effusion"
+            }
+          ]
+        },
+        {
+          "id": "joint_effusion",
+          "rules": [
+            {
+              "conditions": [
+                {
+                  "field": "joint_effusion",
+                  "operator": "equals",
+                  "value": "Severe"
+                }
+              ],
+              "output": "Severe joint effusion"
             }
           ]
         },
@@ -1951,20 +1981,6 @@
                 }
               ],
               "output": "{{facet_arthritis_severity}} facet arthritis at {{facet_arthritis_location}}"
-            },
-            {
-              "conditions": [
-                {
-                  "field": "multilevel_degenerative_changes",
-                  "operator": "equals",
-                  "value": "Yes"
-                },
-                {
-                  "field": "facet_arthritis_severity",
-                  "operator": "exists"
-                }
-              ],
-              "output": "{{facet_arthritis_severity}} facet arthritis"
             }
           ]
         },

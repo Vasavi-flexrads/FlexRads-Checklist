@@ -983,8 +983,26 @@ def knee_config():
                 "id": "joint_effusion",
                 "rules": [
                     rule(
-                        [{"field": "joint_effusion", "operator": "equals", "value": "Present"}],
-                        "Joint effusion present"
+                        [{"field": "joint_effusion", "operator": "equals", "value": "Mild"}],
+                        "Mild joint effusion"
+                    )
+                ]
+            },
+            {
+                "id": "joint_effusion",
+                "rules": [
+                    rule(
+                        [{"field": "joint_effusion", "operator": "equals", "value": "Moderate"}],
+                        "Moderate joint effusion"
+                    )
+                ]
+            },
+            {
+                "id": "joint_effusion",
+                "rules": [
+                    rule(
+                        [{"field": "joint_effusion", "operator": "equals", "value": "Severe"}],
+                        "Severe joint effusion"
                     )
                 ]
             },

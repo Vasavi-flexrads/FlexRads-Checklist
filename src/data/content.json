@@ -1172,8 +1172,8 @@
                 "label": "Chondrocalcinosis",
                 "type": "radio",
                 "options": [
-                    "Yes",
-                    "No"
+                    "Present",
+                    "Absent"
                 ]
             },
             {
