@@ -1244,6 +1244,228 @@ def spine_config():
         ]
     }
 
+def hand_config():
+    return {
+        "study_type": "HAND",
+        "items": [
+            {
+                "id": "hardware",
+                "rules": [
+                    rule(
+                        [
+                            {"field": "hardware", "operator": "equals", "value": "Present"},
+                            {"field": "hardware_details", "operator": "exists"}
+                        ],
+                        "Hardware present: {{hardware_details}}",
+                        stop=True
+                    ),
+                    rule(
+                        [{"field": "hardware", "operator": "equals", "value": "Present"}],
+                        "Hardware present"
+                    )
+                ]
+            },
+            {
+                "id": "degenerative_changes",
+                "rules": [
+                    rule(
+                        [
+                            {"field": "degenerative_changes", "operator": "equals", "value": "Yes"},
+                            {"field": "joints", "operator": "lengthGreaterThan", "value": 0}
+                        ],
+                        list_spec(
+                            "joints",
+                            case_spec(
+                                [
+                                    {
+                                        "conditions": [{"field": "severity", "operator": "exists"}],
+                                        "output": "{{severity}} degenerative changes in {{option}}"
+                                    },
+                                    {
+                                        "default": True,
+                                        "output": "Degenerative changes in {{option}}"
+                                    }
+                                ]
+                            ),
+                            mode="separate",
+                            item_context=[
+                                {
+                                    "alias": "severity",
+                                    "fieldTemplate": "{{optionKey}}_severity"
+                                }
+                            ]
+                        )
+                    ),
+                    rule(
+                        [
+                            {"field": "degenerative_changes", "operator": "equals", "value": "Yes"},
+                            {"field": "joint_space_narrowing", "operator": "in", "value": ["Present", "Yes"]}
+                        ],
+                        "Joint space narrowing present"
+                    ),
+                    rule(
+                        [
+                            {"field": "degenerative_changes", "operator": "equals", "value": "Yes"},
+                            {"field": "osteophytes", "operator": "in", "value": ["Present", "Yes"]}
+                        ],
+                        "Osteophytes present"
+                    ),
+                    rule(
+                        [
+                            {"field": "degenerative_changes", "operator": "equals", "value": "Yes"},
+                            {"field": "sclerotic_changes", "operator": "in", "value": ["Present", "Yes"]}
+                        ],
+                        "Sclerotic changes present"
+                    )
+                ]
+            },
+          {
+                "id": "deformity",
+                "rules": [
+                    rule(
+                        [
+                            {"field": "deformity", "operator": "equals", "value": "Yes"},
+                            {"field": "deformity_type", "operator": "lengthGreaterThan", "value": 0}
+                        ],
+                        list_spec(
+                            "deformity_type",
+                            case_spec(
+                                [
+                                    {
+                                        "conditions": [{"field": "region", "operator": "exists"}],
+                                        "output": "{{option}} in {{region}}"
+                                    },
+                                    {
+                                        "default": True,
+                                        "output": "{{option}}"
+                                    }
+                                ]
+                            ),
+                            mode="separate",
+                            item_context=[
+                                {
+                                    "alias": "region",
+                                    "optionMap": {
+                                        "Swanneck deformity": "swanneck_deformity_region",
+                                        "Boutonniere deformity": "boutonniere_deformity_region",
+                                        "Flexion deformity": "flexion_deformity_region"
+                                    }
+                                }
+                            ]
+                        ),
+                        stop=True
+                    ),
+                    rule(
+                        [{"field": "deformity", "operator": "equals", "value": "Yes"}],
+                        "Deformity present"
+                    )
+                ]
+            },
+            {
+                "id": "acute_fracture",
+                "rules": [
+                    rule(
+                        [
+                            {"field": "acute_fracture", "operator": "equals", "value": "Yes"},
+                            {"field": "fracture_region", "operator": "exists"},
+                            {"field": "fracture_type", "operator": "exists"}
+                        ],
+                        "Acute fracture in {{fracture_region}}, {{fracture_type}}",
+                        stop=True
+                    ),
+                    rule(
+                        [
+                            {"field": "acute_fracture", "operator": "equals", "value": "Yes"},
+                            {"field": "fracture_region", "operator": "exists"}
+                        ],
+                        "Acute fracture in {{fracture_region}}",
+                        stop=True
+                    ),
+                    rule(
+                        [{"field": "acute_fracture", "operator": "equals", "value": "Yes"}],
+                        "Acute fracture"
+                    )
+                ]
+            },
+            {
+                "id": "post_surgical_changes",
+                "rules": [
+                    rule(
+                        [{"field": "post_surgical_changes", "operator": "equals", "value": "Yes"}],
+                        "Post surgical changes in soft tissue"
+                    )
+                ]
+            },
+            {
+                "id": "fracture_followup",
+                "rules": [
+                    rule(
+                        [
+                            {"field": "fracture_followup", "operator": "equals", "value": "Yes"},
+                            {"field": "followup_type", "operator": "exists"},
+                            {"field": "followup_region", "operator": "exists"}
+                        ],
+                        "{{followup_type}} in {{followup_region}}",
+                        stop=True
+                    ),
+                    rule(
+                        [
+                            {"field": "fracture_followup", "operator": "equals", "value": "Yes"},
+                            {"field": "followup_type", "operator": "exists"}
+                        ],
+                        "{{followup_type}}",
+                        stop=True
+                    )
+                ]
+            },
+            {
+                "id": "lesion",
+                "rules": [
+                    rule(
+                        [
+                            {"field": "lesion", "operator": "equals", "value": "Yes"},
+                            {"field": "lesion_region", "operator": "exists"},
+                            {"field": "lesion_size", "operator": "exists"},
+                            {"field": "lesion_characteristics", "operator": "exists"}
+                        ],
+                        "Lesion in {{lesion_region}}, size {{lesion_size}}, {{lesion_characteristics}}",
+                        stop=True
+                    ),
+                    rule(
+                        [
+                            {"field": "lesion", "operator": "equals", "value": "Yes"},
+                            {"field": "lesion_region", "operator": "exists"},
+                            {"field": "lesion_size", "operator": "exists"}
+                        ],
+                        "Lesion in {{lesion_region}}, size {{lesion_size}}",
+                        stop=True
+                    ),
+                    rule(
+                        [
+                            {"field": "lesion", "operator": "equals", "value": "Yes"},
+                            {"field": "lesion_region", "operator": "exists"}
+                        ],
+                        "Lesion in {{lesion_region}}",
+                        stop=True
+                    ),
+                    rule(
+                        [{"field": "lesion", "operator": "equals", "value": "Yes"}],
+                        "Lesion present"
+                    )
+                ]
+            },
+            {
+                "id": "dislocation_subluxation",
+                "rules": [
+                    rule(
+                        [{"field": "dislocation_subluxation", "operator": "equals", "value": "Yes"}],
+                        "Dislocation/subluxation present"
+                    )
+                ]
+            }
+        ]
+    }
+
 
 def write_config(config):
     target = Path(__file__).resolve().parents[1] / 'src' / 'data' / 'reportConfig.json'
@@ -1256,7 +1478,8 @@ report_config = {
         hip_config(),
         shoulder_config(),
         knee_config(),
-        spine_config()
+        spine_config(),
+        hand_config()
     ]
 }
 

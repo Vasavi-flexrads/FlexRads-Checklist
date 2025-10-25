@@ -32,6 +32,11 @@ const XrayStudySelection = () => {
       name: 'Spine',
       icon: '🦴',
     },
+    {
+      id: 'hand',
+      name: 'Hand',
+      icon: '✋',
+    },
   ]
 
   const handleStudySelect = (studyId) => {

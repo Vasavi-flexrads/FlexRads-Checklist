@@ -1490,5 +1490,265 @@
                 "present": "No motion on flexion extension view"
             }
         }
+    },
+    {
+        "study_type": "HAND",
+        "imaging_findings": [
+            {
+                "label": "Laterality",
+                "type": "radio",
+                "options": [
+                    "Right",
+                    "Left",
+                    "Bilateral"
+                ]
+            }
+        ],
+        "checklist_items": [
+            {
+                "id": "hardware",
+                "label": "Hardware",
+                "type": "radio",
+                "options": [
+                    "Present",
+                    "Absent"
+                ],
+                "conditional": {
+                    "condition": "Present",
+                    "sub_items": [
+                        {
+                            "id": "hardware_details",
+                            "label": "Hardware Type and Region",
+                            "type": "text",
+                           "placeholder": "e.g., screws in 2nd metacarpal"
+                        }   
+                    ]      
+            }
+        },
+            {
+                "id": "degenerative_changes",
+                "label": "Degenerative changes",
+                "type": "radio",
+                "options": [ "Yes", "No" ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "joints",
+                            "label": "Affected Joints (multi-select)",
+                            "type": "checkbox",
+                            "options": [
+                                "DIP", "PIP", "MCP", "CMC", "RC"
+                            ],
+                            "follow_up_assessments": {
+                                "title": "Joint-specific assessments",
+                                "items": [
+                                    {
+                                        "id": "severity",
+                                        "label": "{option} Severity",
+                                        "type": "radio",
+                                        "options": ["Mild", "Moderate", "Severe"]
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "id": "joint_space_narrowing",
+                            "label": "Joint space narrowing",
+                            "type": "radio",
+                            "options": [ "Present", "Absent" ]
+                        },
+                        {
+                            "id": "osteophytes",
+                            "label": "Osteophytes",
+                            "type": "radio",
+                            "options": [ "Present", "Absent" ]
+                        },
+                        {
+                            "id": "sclerotic_changes",
+                            "label": "Sclerotic changes",
+                            "type": "radio",
+                            "options": [ "Present", "Absent" ]
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "deformity",
+                "label": "Deformity",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "deformity_type",
+                            "label": "Deformity Type",
+                            "type": "checkbox",
+                            "options": [
+                                "Swanneck deformity",
+                                "Boutonniere deformity",
+                                "Flexion deformity"
+                            ]
+                        },
+                        {
+                            "id": "swanneck_deformity_region",
+                            "label": "Swanneck deformity - Region",
+                            "type": "text",
+                            "placeholder": "e.g., 2nd finger",
+                            "show_when": "deformity_type_includes_Swanneck deformity"
+                        },
+                        {
+                            "id": "boutonniere_deformity_region",
+                            "label": "Boutonniere deformity - Region",
+                            "type": "text",
+                            "placeholder": "e.g., 3rd finger",
+                            "show_when": "deformity_type_includes_Boutonniere deformity"
+                        },
+                        {
+                            "id": "flexion_deformity_region",
+                            "label": "Flexion deformity - Region",
+                            "type": "text",
+                            "placeholder": "e.g., 4th finger",
+                            "show_when": "deformity_type_includes_Flexion deformity"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "acute_fracture",
+                "label": "Acute fracture",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "fracture_region",
+                            "label": "Region",
+                            "type": "text",
+                            "placeholder": "e.g.,2nd metacarpal"
+                        },
+                        {
+                            "id": "fracture_type",
+                            "label": "Type",
+                            "type": "text",
+                            "placeholder": "e.g., mildly displaced, oblique, volar angulated facture"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "post_surgical_changes",
+                "label": "Post surgical soft tissue changes",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ]
+            },
+            {
+                "id": "fracture_followup",
+                "label": "Fracture followup",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "followup_type",
+                            "label": "Followup Type",
+                            "type": "radio",
+                            "options": [
+                                "Old healed fracture",
+                                "Healing fracture"
+                            ]
+                        },
+                        {
+                            "id": "followup_region",
+                            "label": "Region",
+                            "type": "text",
+                            "placeholder": " ",
+                            "show_when": "followup_type_not_empty"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "lesion",
+                "label": "Lesion",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ],
+                "conditional": {
+                    "condition": "Yes",
+                    "sub_items": [
+                        {
+                            "id": "lesion_region",
+                            "label": "Region",
+                            "type": "text",
+                            "placeholder": "e.g., 2nd metacarpal"
+                        },
+                        {
+                            "id": "lesion_size",
+                            "label": "Size",
+                            "type": "text",
+                            "placeholder": "e.g.,2x3 cm"
+                        },
+                        {
+                            "id": "lesion_characteristics",
+                            "label": "Characteristics",
+                            "type": "text",
+                            "placeholder": "e.g., Sclerotic, lytic"
+                        }
+                    ]
+                }
+            },
+            {
+                "id": "dislocation_subluxation",
+                "label": "Dislocation / Subluxation",
+                "type": "radio",
+                "options": [
+                    "Yes",
+                    "No"
+                ]
+            }
+        ],
+        "findings_templates": {
+            "hardware": {
+                "present": "Hardware present: {details}"
+            },
+            "post_surgical_changes": {
+                "yes": "Post surgical changes in soft tissue"
+            },
+            "deformity": {
+                "yes_with_type": "Deformity in {type}"
+            },
+            "acute_fracture": {
+                "yes_with_region_type": "Acute fracture in {region}, {type}",
+                "yes_with_region": "Acute fracture in {region}",
+                "yes": "Acute fracture"
+            },
+            "fracture_followup": {
+                "yes": "{followup_type} in {region}"
+            },
+            "lesion": {
+                "yes_with_details": "Lesion in {region}, size {size}, {characteristics}",
+                "yes_with_region_size": "Lesion in {region}, size {size}",
+                "yes_with_region": "Lesion in {region}",
+                "yes": "Lesion"
+            }
+        }
     }
 ]
